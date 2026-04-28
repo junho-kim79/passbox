@@ -56,25 +56,29 @@ body{
   position:fixed;top:0;left:50%;transform:translateX(-50%);
   width:100%;max-width:var(--max-w);height:100%;background:var(--white);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  z-index:800;padding:40px 32px;transition:opacity .35s;
+  z-index:800;padding:40px 32px 80px;transition:opacity .35s;
+  overflow-y:auto;
 }
 #homeScreen.hidden{opacity:0;pointer-events:none;}
 .home-title{font-size:26px;font-weight:700;letter-spacing:-.5px;margin-bottom:6px;text-align:center;}
 .home-sub{font-size:14px;color:var(--text3);margin-bottom:48px;text-align:center;}
 .home-doors{display:flex;flex-direction:column;gap:14px;width:100%;max-width:300px;}
 .door-btn{
-  display:flex;align-items:center;gap:16px;padding:20px 22px;
-  border:2px solid var(--border);border-radius:var(--r);background:var(--surface);
+  display:flex;align-items:center;gap:18px;padding:22px 24px;
+  border:3px solid var(--border2);border-radius:var(--r);background:var(--white);
   cursor:pointer;transition:all .2s;text-align:left;width:100%;
+  box-shadow:0 2px 10px rgba(0,0,0,0.06);
 }
-.door-btn.pw-door:hover,.door-btn.pw-door:active{border-color:var(--accent);background:var(--accent-light);}
-.door-btn.song-door:hover,.door-btn.song-door:active{border-color:var(--song);background:var(--song-light);}
-.door-icon{font-size:32px;line-height:1;}
+.door-btn.pw-door{border-color:var(--accent);background:var(--accent-light);}
+.door-btn.pw-door:active{background:#dbeafe;}
+.door-btn.song-door{border-color:var(--song);background:var(--song-light);}
+.door-btn.song-door:active{background:#fde8d8;}
+.door-icon{font-size:36px;line-height:1;}
 .door-info{}
-.door-name{font-size:17px;font-weight:700;color:var(--text);}
-.door-desc{font-size:12px;color:var(--text3);margin-top:3px;}
-.home-credit{position:absolute;bottom:28px;font-size:11px;color:var(--text3);letter-spacing:.3px;}
-.home-credit span{color:var(--text2);font-weight:600;}
+.door-name{font-size:18px;font-weight:700;color:var(--text);}
+.door-desc{font-size:13px;color:var(--text3);margin-top:4px;}
+.home-credit{position:absolute;bottom:24px;font-size:13px;color:var(--text3);letter-spacing:.3px;}
+.home-credit span{color:var(--text2);font-weight:700;font-size:15px;}
 
 /* ── LOCK ── */
 #lockScreen{
@@ -270,8 +274,11 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
 
 <!-- ── HOME ── -->
 <div id="homeScreen">
-  <div class="home-title">당신의 비번창고</div>
-  <div class="home-sub">어디로 들어갈까요?</div>
+  <div style="text-align:center;margin-bottom:44px;">
+    <div style="font-size:48px;margin-bottom:16px;">🔐</div>
+    <div style="font-size:30px;font-weight:800;letter-spacing:-1px;color:var(--text);line-height:1.2;">당신의<br>비번창고</div>
+    <div style="font-size:13px;color:var(--text3);margin-top:10px;">어디로 들어갈까요?</div>
+  </div>
   <div class="home-doors">
     <button class="door-btn pw-door" id="goPwBtn">
       <div class="door-icon">🔐</div>
@@ -288,20 +295,33 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
       </div>
     </button>
   </div>
+  <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border);width:100%;max-width:300px;text-align:center;">
+    <div style="font-size:12px;color:var(--text3);line-height:1.9;">
+      살다 보면 말하진 못해도 꼭 필요한 게 있습니다.<br>
+      전부 유료. 광고. 또 유료. 또 광고. 😤<br>
+      <strong style="color:var(--text2);">빡쳐서 제가 개발해서 만들었습니다.</strong><br>
+      광고 없고, 돈 안 받고, 그냥 씁니다. 🙂
+    </div>
+  </div>
   <div class="home-credit">made by <span>Junho.Kim</span></div>
 </div>
 
 <!-- ── LOCK ── -->
 <div id="lockScreen" class="hidden">
   <button class="lock-back" id="lockBackBtn">← 돌아가기</button>
-  <div class="lock-icon">🔐</div>
-  <div class="lock-title">비번창고</div>
-  <div class="lock-sub" id="lockSub">마스터 비밀번호를 입력하세요</div>
-  <div class="lock-form">
-    <input type="password" class="lock-input" id="masterInput" placeholder="••••••••" maxlength="30">
-    <div class="lock-err" id="lockErr"></div>
-    <button class="lock-btn" id="lockBtn">잠금 해제</button>
-    <div class="lock-hint" id="lockHint"></div>
+  <div style="width:100%;max-width:320px;">
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="font-size:42px;margin-bottom:14px;">🔐</div>
+      <div style="font-size:26px;font-weight:800;letter-spacing:-.5px;color:var(--text);">비번창고</div>
+    </div>
+    <div style="background:var(--white);border-radius:20px;padding:28px 24px;box-shadow:0 4px 24px rgba(0,0,0,0.10);border:1px solid var(--border);">
+      <div style="font-size:14px;font-weight:600;color:var(--text2);margin-bottom:16px;text-align:center;" id="lockSub">마스터 비밀번호를 입력하세요</div>
+      <input type="password" class="lock-input" id="masterInput" placeholder="••••••••" maxlength="30">
+      <div class="lock-err" id="lockErr"></div>
+      <div class="lock-hint" id="lockHint"></div>
+      <div id="lockSuccess" style="display:none;text-align:center;padding:10px;background:var(--green);color:#fff;border-radius:var(--r-sm);font-size:14px;font-weight:600;margin-bottom:12px;">✓ 비밀번호가 설정되었습니다!</div>
+      <button class="lock-btn" id="lockBtn" style="margin-top:12px;">잠금 해제</button>
+    </div>
   </div>
 </div>
 
@@ -438,21 +458,53 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
   <div class="modal-box">
     <div class="modal-handle"></div>
     <div class="modal-title">💬 앱 소개</div>
-    <div style="line-height:1.9;color:var(--text2);font-size:15px;">
-      <p style="margin-bottom:14px;">살다 보면 <strong style="color:var(--text)">말하진 못해도 꼭 필요한 게</strong> 있습니다.</p>
-      <p style="margin-bottom:14px;">비밀번호는 외우기엔 너무 많고,<br>메모장에 적기엔 불안하고,<br>노래방 레퍼토리는 항상 생각이 안 나고...</p>
-      <p style="margin-bottom:14px;">그런데 정작 앱을 찾아보면?<br><strong style="color:var(--text)">전부 유료. 광고. 또 유료. 또 광고.</strong> 😤</p>
-      <p style="margin-bottom:20px;"><strong style="color:var(--text)">빡쳐서 제가 개발해서 만들었습니다.</strong></p>
-      <p style="margin-bottom:0;">광고 없고, 돈 안 받고, 그냥 씁니다. 🙂</p>
+
+    <!-- 보안 박스 -->
+    <div style="margin-bottom:10px;padding:20px;background:var(--accent-light);border-radius:var(--r);border:2px solid var(--accent);">
+      <div style="font-size:22px;margin-bottom:8px;">🔒</div>
+      <div style="font-size:15px;font-weight:700;color:var(--accent);margin-bottom:6px;">서버 저장 없음</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7;">당신의 비번창고는 서버에 비밀번호를 저장하지 않습니다. 모든 데이터는 사용자의 기기에만 저장되며, 백업은 내보내기 기능으로 직접 관리합니다.</div>
     </div>
-    <div style="margin-top:24px;padding:16px;background:var(--accent-light);border-radius:var(--r-sm);border:1px solid rgba(37,99,235,.15);font-size:13px;color:var(--text2);line-height:1.7;">
-      🔒 당신의 비번창고는 서버에 비밀번호를 저장하지 않습니다. 모든 데이터는 사용자의 기기에만 저장되며, 백업은 내보내기 기능으로 직접 관리합니다.
+
+    <!-- 경고 박스 -->
+    <div style="margin-bottom:20px;padding:20px;background:#fff7ed;border-radius:var(--r);border:2px solid var(--song);">
+      <div style="font-size:22px;margin-bottom:8px;">⚠️</div>
+      <div style="font-size:15px;font-weight:700;color:var(--song);margin-bottom:6px;">백업 필수!</div>
+      <div style="font-size:13px;color:#92400e;line-height:1.7;">휴대폰 변경, 브라우저 삭제, 앱 삭제 시 데이터가 사라질 수 있으니 반드시 정기적으로 내보내기 백업을 해주세요.</div>
     </div>
-    <div style="margin-top:10px;padding:16px;background:#fff7ed;border-radius:var(--r-sm);border:1px solid rgba(232,93,4,.2);font-size:13px;color:#92400e;line-height:1.7;">
-      ⚠️ <strong>휴대폰 변경, 브라우저 삭제, 앱 삭제 시 데이터가 사라질 수 있으니 반드시 정기적으로 내보내기 백업을 해주세요.</strong>
+
+    <!-- 핵심 포인트 -->
+    <div style="margin-bottom:20px;padding:20px;background:var(--surface);border-radius:var(--r);border:1.5px solid var(--border);">
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px;">✅ 핵심 포인트</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text2);">
+          <span style="font-size:18px;">🛡️</span> 서버 저장 <strong style="color:var(--red);">❌</strong> — 내 기기에만 저장
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text2);">
+          <span style="font-size:18px;">🔐</span> 해킹 위험 최소화
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text2);">
+          <span style="font-size:18px;">📊</span> 엑셀 내보내기 · 가져오기 백업 가능
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text2);">
+          <span style="font-size:18px;">👆</span> 누구나 바로 사용 가능
+        </div>
+      </div>
     </div>
-    <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);text-align:center;font-size:12px;color:var(--text3);letter-spacing:.3px;">
-      made by <span style="color:var(--text2);font-weight:600;">Junho.Kim</span>
+
+    <!-- 개발 배경 -->
+    <div style="padding:20px;background:var(--surface);border-radius:var(--r);border:1.5px solid var(--border);margin-bottom:24px;line-height:1.9;color:var(--text2);font-size:14px;">
+      <p style="margin-bottom:10px;">살다 보면 <strong style="color:var(--text)">말하진 못해도 꼭 필요한 게</strong> 있습니다.</p>
+      <p style="margin-bottom:10px;">비밀번호는 외우기엔 너무 많고,<br>메모장에 적기엔 불안하고,<br>노래방 레퍼토리는 항상 생각이 안 나고...</p>
+      <p style="margin-bottom:10px;">그런데 정작 앱을 찾아보면?<br><strong style="color:var(--text)">전부 유료. 광고. 또 유료. 또 광고.</strong> 😤</p>
+      <p style="margin-bottom:10px;"><strong style="color:var(--text)">빡쳐서 제가 개발해서 만들었습니다.</strong></p>
+      <p>광고 없고, 돈 안 받고, 그냥 씁니다. 🙂</p>
+    </div>
+
+    <!-- made by -->
+    <div style="padding-top:20px;border-top:1px solid var(--border);text-align:center;">
+      <div style="font-size:13px;color:var(--text3);margin-bottom:4px;">만든 사람</div>
+      <div style="font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.3px;">Junho.Kim</div>
     </div>
   </div>
 </div>
@@ -513,6 +565,7 @@ function initLock(){
   }
   $('lockErr').textContent='';
   $('masterInput').value='';
+  if($('lockSuccess'))$('lockSuccess').style.display='none';
 }
 function handleUnlock(){
   const pw=$('masterInput').value.trim();
@@ -520,7 +573,11 @@ function handleUnlock(){
   if(isFirst()){
     if(pw.length<4){$('lockErr').textContent='4자 이상 입력해주세요';return;}
     localStorage.setItem(MK,hash(pw));masterKey=pw;pwEntries=[];
-    savePw();unlockPw();
+    savePw();
+    // 설정 완료 메시지 표시
+    $('lockSuccess').style.display='block';
+    $('lockBtn').textContent='입장하기';
+    setTimeout(()=>unlockPw(), 1200);
   } else {
     if(hash(pw)!==localStorage.getItem(MK)){
       $('lockErr').textContent='비밀번호가 틀렸습니다';
