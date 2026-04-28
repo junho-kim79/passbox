@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>당신의 비번창고</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#f4f4f0;--white:#fff;--surface:#fafaf8;--border:#e6e6e0;--border2:#d4d4cc;
+  --accent:#2563eb;--accent-light:#eff6ff;--accent2:#1d4ed8;
+  --song:#e85d04;--song-light:#fff4ee;--song2:#c04b02;
+  --green:#16a34a;--red:#dc2626;--yellow:#d97706;
+  --text:#1a1a1a;--text2:#555;--text3:#999;
+  --mono:'DM Mono',monospace;--sans:'Noto Sans KR',sans-serif;
+  --r:14px;--r-sm:9px;
+  --max-w:430px;
+}
+html{background:#ddddd8;min-height:100vh;}
+body{
+  background:var(--bg);color:var(--text);font-family:var(--sans);
+  min-height:100vh;font-size:15px;
+  max-width:var(--max-w);margin:0 auto;
+  position:relative;
+  box-shadow:0 0 40px rgba(0,0,0,0.12);
+}
+
+#toast{
+  position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:#1a1a1a;color:#fff;padding:10px 22px;border-radius:999px;
+  font-size:13px;font-weight:500;opacity:0;transition:all .3s;pointer-events:none;z-index:9999;white-space:nowrap;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.38);
+  display:flex;align-items:flex-end;justify-content:center;
+  z-index:500;opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-box{
+  background:var(--white);border-radius:22px 22px 0 0;
+  width:100%;max-width:500px;padding:24px 22px 44px;
+  transform:translateY(50px);transition:transform .3s cubic-bezier(.32,1,.23,1);
+  max-height:88vh;overflow-y:auto;
+}
+.modal-overlay.open .modal-box{transform:translateY(0);}
+.modal-handle{width:38px;height:4px;background:var(--border2);border-radius:99px;margin:0 auto 22px;}
+.modal-title{font-size:18px;font-weight:700;margin-bottom:20px;}
+
+/* ── HOME ── */
+#homeScreen{
+  position:fixed;top:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:var(--max-w);height:100%;background:var(--white);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:800;padding:40px 32px;transition:opacity .35s;
+}
+#homeScreen.hidden{opacity:0;pointer-events:none;}
+.home-title{font-size:26px;font-weight:700;letter-spacing:-.5px;margin-bottom:6px;text-align:center;}
+.home-sub{font-size:14px;color:var(--text3);margin-bottom:48px;text-align:center;}
+.home-doors{display:flex;flex-direction:column;gap:14px;width:100%;max-width:300px;}
+.door-btn{
+  display:flex;align-items:center;gap:16px;padding:20px 22px;
+  border:2px solid var(--border);border-radius:var(--r);background:var(--surface);
+  cursor:pointer;transition:all .2s;text-align:left;width:100%;
+}
+.door-btn.pw-door:hover,.door-btn.pw-door:active{border-color:var(--accent);background:var(--accent-light);}
+.door-btn.song-door:hover,.door-btn.song-door:active{border-color:var(--song);background:var(--song-light);}
+.door-icon{font-size:32px;line-height:1;}
+.door-info{}
+.door-name{font-size:17px;font-weight:700;color:var(--text);}
+.door-desc{font-size:12px;color:var(--text3);margin-top:3px;}
+.home-credit{position:absolute;bottom:28px;font-size:11px;color:var(--text3);letter-spacing:.3px;}
+.home-credit span{color:var(--text2);font-weight:600;}
+
+/* ── LOCK ── */
+#lockScreen{
+  position:fixed;top:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:var(--max-w);height:100%;background:var(--white);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:700;padding:40px 32px;transition:opacity .35s;
+}
+#lockScreen.hidden{opacity:0;pointer-events:none;}
+.lock-back{
+  position:absolute;top:20px;left:16px;background:none;border:none;
+  font-size:15px;color:var(--text2);cursor:pointer;padding:8px;font-family:var(--sans);
+  display:flex;align-items:center;gap:4px;
+}
+.lock-icon{width:68px;height:68px;background:var(--accent-light);border-radius:22px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;font-size:30px;}
+.lock-title{font-size:22px;font-weight:700;letter-spacing:-.5px;margin-bottom:6px;}
+.lock-sub{font-size:14px;color:var(--text3);margin-bottom:36px;text-align:center;line-height:1.5;}
+.lock-form{width:100%;max-width:300px;display:flex;flex-direction:column;gap:10px;}
+.lock-input{
+  width:100%;padding:15px 18px;border:1.5px solid var(--border);border-radius:var(--r);
+  font-size:16px;font-family:var(--sans);background:var(--surface);color:var(--text);
+  outline:none;transition:border .2s;letter-spacing:3px;text-align:center;
+}
+.lock-input:focus{border-color:var(--accent);}
+.lock-input.err{border-color:var(--red);animation:shake .3s;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-7px);}75%{transform:translateX(7px)};}
+.lock-btn{
+  padding:15px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);
+  font-size:16px;font-weight:700;font-family:var(--sans);cursor:pointer;transition:all .15s;
+}
+.lock-btn:active{background:var(--accent2);transform:scale(.98);}
+.lock-err{font-size:13px;color:var(--red);text-align:center;min-height:18px;}
+.lock-hint{font-size:12px;color:var(--text3);text-align:center;}
+
+/* ── COMMON APP ── */
+.app-screen{display:none;flex-direction:column;min-height:100vh;}
+.app-screen.visible{display:flex;}
+
+.header{background:var(--white);border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:0;z-index:100;}
+.header.pw-header{background:var(--white);}
+.header.song-header{background:var(--white);}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;}
+.header-title{font-size:19px;font-weight:700;letter-spacing:-.3px;}
+.header-count{font-size:12px;color:var(--text3);margin-top:1px;}
+.header-right{display:flex;gap:8px;align-items:center;}
+.icon-btn{
+  width:38px;height:38px;border:none;background:var(--surface);border-radius:var(--r-sm);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:19px;
+  transition:background .15s;color:var(--text2);
+}
+.icon-btn:active{background:var(--border);}
+.back-btn{
+  display:flex;align-items:center;gap:4px;background:none;border:none;
+  font-size:13px;color:var(--text2);cursor:pointer;padding:4px 0;font-family:var(--sans);
+}
+.search-wrap{padding:0 0 12px;position:relative;}
+.search-input{
+  width:100%;padding:10px 14px 10px 38px;border:1.5px solid var(--border);border-radius:var(--r-sm);
+  font-size:14px;font-family:var(--sans);background:var(--surface);color:var(--text);outline:none;transition:border .2s;
+}
+.search-input:focus{border-color:var(--accent);}
+.search-input.song:focus{border-color:var(--song);}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text3);}
+
+.fab{
+  position:fixed;bottom:28px;right:calc(50% - var(--max-w)/2 + 20px);width:56px;height:56px;
+  color:#fff;border:none;border-radius:50%;font-size:28px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .15s,box-shadow .15s;z-index:200;
+}
+@media(max-width:430px){
+  .fab{right:20px;}
+}
+.fab.pw-fab{background:var(--accent);box-shadow:0 4px 16px rgba(37,99,235,.35);}
+.fab.song-fab{background:var(--song);box-shadow:0 4px 16px rgba(232,93,4,.35);}
+.fab:active{transform:scale(.92);}
+
+.list-wrap{padding:8px 14px 100px;display:flex;flex-direction:column;}
+.list-section-label{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;padding:12px 2px 6px;}
+
+/* ── PW LIST ITEM ── */
+.list-item{
+  background:var(--white);border-radius:var(--r);border:1px solid var(--border);
+  margin-bottom:8px;overflow:hidden;
+}
+.list-item-main{display:flex;align-items:center;padding:13px 14px;gap:12px;cursor:pointer;}
+.item-icon{
+  width:42px;height:42px;border-radius:11px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;font-weight:700;font-family:var(--mono);flex-shrink:0;
+}
+.item-icon.pw{background:var(--accent-light);color:var(--accent);}
+.item-icon.song{background:var(--song-light);color:var(--song);}
+.item-info{flex:1;min-width:0;}
+.item-name{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.item-sub{font-size:13px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.item-sub.mono{font-family:var(--mono);}
+.item-right{display:flex;align-items:center;gap:4px;}
+.star-btn{background:none;border:none;cursor:pointer;font-size:19px;padding:4px;color:var(--text3);line-height:1;}
+.star-btn.on{color:var(--yellow);}
+.chevron{background:none;border:none;cursor:pointer;font-size:20px;color:var(--text3);padding:4px;transition:transform .2s;line-height:1;}
+.chevron.open{transform:rotate(180deg);}
+
+.item-expand{border-top:1px solid var(--border);padding:14px;display:none;flex-direction:column;gap:10px;background:var(--surface);}
+.item-expand.open{display:flex;}
+.exp-row{display:flex;align-items:center;gap:8px;}
+.exp-label{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;width:44px;flex-shrink:0;}
+.exp-val{font-size:14px;font-family:var(--mono);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.exp-val.hide{letter-spacing:4px;color:var(--text3);}
+.exp-val.normal{font-family:var(--sans);}
+.pw-eye{background:none;border:none;cursor:pointer;font-size:15px;color:var(--text3);padding:2px 4px;}
+.copy-row{display:flex;gap:6px;flex-wrap:wrap;}
+.cbtn{
+  flex:1;min-width:80px;padding:9px 6px;border:1.5px solid var(--border);background:var(--white);
+  border-radius:var(--r-sm);font-size:12px;font-weight:600;font-family:var(--sans);
+  cursor:pointer;color:var(--text2);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:3px;
+}
+.cbtn:active{background:var(--border);}
+.cbtn.all{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+.cbtn.all:active{background:#dbeafe;}
+.exp-memo{font-size:13px;color:var(--text2);line-height:1.5;padding:8px 10px;background:var(--white);border-radius:var(--r-sm);border:1px solid var(--border);}
+.act-row{display:flex;gap:6px;}
+.abtn{flex:1;padding:8px;border:none;background:transparent;border-radius:var(--r-sm);font-size:12px;font-weight:600;font-family:var(--sans);cursor:pointer;color:var(--text3);transition:background .15s;}
+.abtn:hover{background:var(--border);}
+.abtn.mod{color:var(--accent);}
+.abtn.mod.song{color:var(--song);}
+.abtn.del{color:var(--red);}
+
+/* ── SONG ITEM ── */
+.song-num{
+  display:inline-block;font-family:var(--mono);font-size:12px;font-weight:600;
+  background:var(--song-light);color:var(--song);padding:2px 8px;border-radius:99px;
+  border:1px solid rgba(232,93,4,.2);
+}
+
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:72px 32px;color:var(--text3);gap:10px;}
+.empty-icon{font-size:46px;opacity:.35;}
+.empty-text{font-size:15px;font-weight:500;}
+.empty-sub{font-size:13px;text-align:center;line-height:1.5;}
+
+/* ── FORM ── */
+.fg{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.fl{font-size:13px;font-weight:600;color:var(--text2);}
+.fi{
+  width:100%;padding:13px 14px;border:1.5px solid var(--border);border-radius:var(--r-sm);
+  font-size:15px;font-family:var(--sans);background:var(--surface);color:var(--text);
+  outline:none;transition:border .2s;
+}
+.fi:focus{border-color:var(--accent);}
+.fi.song-fi:focus{border-color:var(--song);}
+.fi.mono{font-family:var(--mono);letter-spacing:1px;}
+.pw-row{display:flex;gap:8px;}
+.pw-row .fi{flex:1;}
+.gen-btn{
+  padding:0 14px;background:var(--accent-light);color:var(--accent);border:1.5px solid var(--accent);
+  border-radius:var(--r-sm);font-size:13px;font-weight:700;font-family:var(--sans);cursor:pointer;transition:all .15s;
+}
+.gen-btn:active{background:#dbeafe;}
+textarea.fi{resize:none;min-height:76px;line-height:1.5;}
+.str-bars{display:flex;gap:4px;margin-top:5px;}
+.sbar{height:3px;flex:1;border-radius:99px;background:var(--border);transition:background .3s;}
+.sbar.w{background:var(--red);}.sbar.m{background:var(--yellow);}.sbar.s{background:var(--green);}
+.str-label{font-size:11px;color:var(--text3);margin-top:3px;}
+.form-btn{
+  width:100%;padding:15px;color:#fff;border:none;border-radius:var(--r);
+  font-size:16px;font-weight:700;font-family:var(--sans);cursor:pointer;transition:all .15s;margin-top:2px;
+}
+.form-btn.pw-btn{background:var(--accent);}
+.form-btn.pw-btn:active{background:var(--accent2);}
+.form-btn.song-btn{background:var(--song);}
+.form-btn.song-btn:active{background:var(--song2);}
+.form-btn:active{transform:scale(.98);}
+
+/* ── MENU ── */
+.menu-list{display:flex;flex-direction:column;gap:6px;}
+.mi{display:flex;align-items:center;gap:14px;padding:14px;background:var(--surface);border-radius:var(--r-sm);cursor:pointer;border:1px solid var(--border);transition:background .15s;}
+.mi:active{background:var(--border);}
+.mi-icon{font-size:22px;width:26px;text-align:center;}
+.mi-info{flex:1;}
+.mi-title{font-size:15px;font-weight:600;}
+.mi-sub{font-size:12px;color:var(--text3);margin-top:2px;}
+.mi-arrow{color:var(--text3);}
+.mi.danger .mi-title{color:var(--red);}
+
+#fileInput{display:none;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px;}
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<!-- ── HOME ── -->
+<div id="homeScreen">
+  <div class="home-title">당신의 비번창고</div>
+  <div class="home-sub">어디로 들어갈까요?</div>
+  <div class="home-doors">
+    <button class="door-btn pw-door" id="goPwBtn">
+      <div class="door-icon">🔐</div>
+      <div class="door-info">
+        <div class="door-name">비번창고</div>
+        <div class="door-desc">아이디 · 비밀번호 관리</div>
+      </div>
+    </button>
+    <button class="door-btn song-door" id="goSongBtn">
+      <div class="door-icon">🎤</div>
+      <div class="door-info">
+        <div class="door-name">노래창고</div>
+        <div class="door-desc">내 노래 목록 관리</div>
+      </div>
+    </button>
+  </div>
+  <div class="home-credit">made by <span>Junho.Kim</span></div>
+</div>
+
+<!-- ── LOCK ── -->
+<div id="lockScreen" class="hidden">
+  <button class="lock-back" id="lockBackBtn">← 돌아가기</button>
+  <div class="lock-icon">🔐</div>
+  <div class="lock-title">비번창고</div>
+  <div class="lock-sub" id="lockSub">마스터 비밀번호를 입력하세요</div>
+  <div class="lock-form">
+    <input type="password" class="lock-input" id="masterInput" placeholder="••••••••" maxlength="30">
+    <div class="lock-err" id="lockErr"></div>
+    <button class="lock-btn" id="lockBtn">잠금 해제</button>
+    <div class="lock-hint" id="lockHint"></div>
+  </div>
+</div>
+
+<!-- ── PW APP ── -->
+<div id="pwApp" class="app-screen">
+  <div class="header pw-header">
+    <div class="header-top">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button class="back-btn" id="pwBackBtn">← 홈</button>
+        </div>
+        <div class="header-title">🔐 비번창고</div>
+        <div class="header-count" id="pwCount"></div>
+      </div>
+      <div class="header-right">
+        <button class="icon-btn" id="pwMenuBtn">☰</button>
+      </div>
+    </div>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="search" class="search-input" id="pwSearch" placeholder="사이트, 아이디 검색...">
+    </div>
+  </div>
+  <div class="list-wrap" id="pwList"></div>
+  <div style="text-align:center;padding:0 0 110px;font-size:11px;color:var(--text3);">made by <span style="color:var(--text2);font-weight:600;">Junho.Kim</span></div>
+  <button class="fab pw-fab" id="pwFab">+</button>
+</div>
+
+<!-- ── SONG APP ── -->
+<div id="songApp" class="app-screen">
+  <div class="header song-header">
+    <div class="header-top">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button class="back-btn" id="songBackBtn">← 홈</button>
+        </div>
+        <div class="header-title">🎤 노래창고</div>
+        <div class="header-count" id="songCount"></div>
+      </div>
+      <div class="header-right">
+        <button class="icon-btn" id="songMenuBtn">☰</button>
+      </div>
+    </div>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="search" class="search-input song" id="songSearch" placeholder="노래 제목, 가수 검색...">
+    </div>
+  </div>
+  <div class="list-wrap" id="songList"></div>
+  <div style="text-align:center;padding:0 0 110px;font-size:11px;color:var(--text3);">made by <span style="color:var(--text2);font-weight:600;">Junho.Kim</span></div>
+  <button class="fab song-fab" id="songFab">+</button>
+</div>
+
+<!-- ── PW ADD/EDIT MODAL ── -->
+<div class="modal-overlay" id="pwAddModal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="pwAddTitle">새 항목 추가</div>
+    <div class="fg"><div class="fl">사이트 / 앱 이름</div><input type="text" class="fi" id="fName" placeholder="예) 네이버, 카카오뱅크, 회사 VPN"></div>
+    <div class="fg"><div class="fl">아이디 / 이메일</div><input type="text" class="fi" id="fId" placeholder="아이디 또는 이메일" autocomplete="off"></div>
+    <div class="fg">
+      <div class="fl">비밀번호</div>
+      <div class="pw-row">
+        <input type="text" class="fi mono" id="fPw" placeholder="비밀번호" autocomplete="new-password">
+        <button class="gen-btn" id="genBtn">🎲 생성</button>
+      </div>
+      <div class="str-bars"><div class="sbar" id="sb1"></div><div class="sbar" id="sb2"></div><div class="sbar" id="sb3"></div></div>
+      <div class="str-label" id="strLabel"></div>
+    </div>
+    <div class="fg"><div class="fl">메모 <span style="font-weight:400;color:var(--text3)">(선택)</span></div><textarea class="fi" id="fMemo" placeholder="추가 정보, 보안 질문 답 등..."></textarea></div>
+    <button class="form-btn pw-btn" id="pwSaveBtn">저장</button>
+  </div>
+</div>
+
+<!-- ── SONG ADD/EDIT MODAL ── -->
+<div class="modal-overlay" id="songAddModal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="songAddTitle">노래 추가</div>
+    <div class="fg"><div class="fl">노래 제목</div><input type="text" class="fi song-fi" id="sTitle" placeholder="예) 사랑은 늘 도망가"></div>
+    <div class="fg"><div class="fl">가수</div><input type="text" class="fi song-fi" id="sArtist" placeholder="예) 임영웅"></div>
+    <div class="fg"><div class="fl">번호 <span style="font-weight:400;color:var(--text3)">(선택 — 노래방 기기 번호)</span></div><input type="text" class="fi song-fi mono" id="sNum" placeholder="예) 12345" inputmode="numeric"></div>
+    <div class="fg"><div class="fl">메모 <span style="font-weight:400;color:var(--text3)">(선택)</span></div><textarea class="fi song-fi" id="sMemo" placeholder="예) 2절부터 어려움, 키 낮춰서 부르기..."></textarea></div>
+    <button class="form-btn song-btn" id="songSaveBtn">저장</button>
+  </div>
+</div>
+
+<!-- ── PW MENU MODAL ── -->
+<div class="modal-overlay" id="pwMenuModal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title">비번창고 메뉴</div>
+    <div class="menu-list">
+      <div class="mi" id="pwExportBtn"><div class="mi-icon">📊</div><div class="mi-info"><div class="mi-title">엑셀로 내보내기</div><div class="mi-sub">백업 · 폰 교체 시 사용</div></div><div class="mi-arrow">›</div></div>
+      <div class="mi" id="pwImportBtn"><div class="mi-icon">📥</div><div class="mi-info"><div class="mi-title">엑셀에서 가져오기</div><div class="mi-sub">기존 파일 불러오기</div></div><div class="mi-arrow">›</div></div>
+      <div class="mi" id="changePwBtn"><div class="mi-icon">🔑</div><div class="mi-info"><div class="mi-title">마스터 비밀번호 변경</div><div class="mi-sub">주기적으로 바꿔주세요</div></div><div class="mi-arrow">›</div></div>
+      <div class="mi" id="lockMenuBtn"><div class="mi-icon">🔒</div><div class="mi-info"><div class="mi-title">잠금 후 홈으로</div><div class="mi-sub">앱을 잠그고 나갑니다</div></div><div class="mi-arrow">›</div></div>
+      <div class="mi danger" id="pwDeleteAllBtn"><div class="mi-icon">🗑️</div><div class="mi-info"><div class="mi-title">전체 데이터 삭제</div><div class="mi-sub">복구 불가 — 신중히!</div></div><div class="mi-arrow">›</div></div>
+      <div class="mi" id="aboutBtn"><div class="mi-icon">💬</div><div class="mi-info"><div class="mi-title">앱 소개</div><div class="mi-sub">만든 이야기</div></div><div class="mi-arrow">›</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SONG MENU MODAL ── -->
+<div class="modal-overlay" id="songMenuModal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title">노래창고 메뉴</div>
+    <div class="menu-list">
+      <div class="mi" id="songExportBtn"><div class="mi-icon">📊</div><div class="mi-info"><div class="mi-title">엑셀로 내보내기</div><div class="mi-sub">노래 목록 백업</div></div><div class="mi-arrow">›</div></div>
+      <div class="mi" id="songImportBtn"><div class="mi-icon">📥</div><div class="mi-info"><div class="mi-title">엑셀에서 가져오기</div><div class="mi-sub">기존 파일 불러오기</div></div><div class="mi-arrow">›</div></div>
+      <div class="mi danger" id="songDeleteAllBtn"><div class="mi-icon">🗑️</div><div class="mi-info"><div class="mi-title">전체 노래 삭제</div><div class="mi-sub">복구 불가 — 신중히!</div></div><div class="mi-arrow">›</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CHANGE MASTER PW MODAL ── -->
+<div class="modal-overlay" id="changePwModal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title">마스터 비밀번호 변경</div>
+    <div class="fg"><div class="fl">현재 비밀번호</div><input type="password" class="fi" id="cpCur" placeholder="현재 비밀번호"></div>
+    <div class="fg"><div class="fl">새 비밀번호</div><input type="password" class="fi" id="cpNew" placeholder="새 비밀번호 (4자 이상)"></div>
+    <div class="fg"><div class="fl">새 비밀번호 확인</div><input type="password" class="fi" id="cpCfm" placeholder="다시 입력"></div>
+    <button class="form-btn pw-btn" id="cpSave">변경하기</button>
+  </div>
+</div>
+
+<input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
+<input type="file" id="songFileInput" accept=".xlsx,.xls,.csv">
+
+<!-- ── ABOUT MODAL ── -->
+<div class="modal-overlay" id="aboutModal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title">💬 앱 소개</div>
+    <div style="line-height:1.9;color:var(--text2);font-size:15px;">
+      <p style="margin-bottom:14px;">살다 보면 <strong style="color:var(--text)">말하진 못해도 꼭 필요한 게</strong> 있습니다.</p>
+      <p style="margin-bottom:14px;">비밀번호는 외우기엔 너무 많고,<br>메모장에 적기엔 불안하고,<br>노래방 레퍼토리는 항상 생각이 안 나고...</p>
+      <p style="margin-bottom:14px;">그런데 정작 앱을 찾아보면?<br><strong style="color:var(--text)">전부 유료. 광고. 또 유료. 또 광고.</strong> 😤</p>
+      <p style="margin-bottom:20px;"><strong style="color:var(--text)">빡쳐서 제가 개발해서 만들었습니다.</strong></p>
+      <p style="margin-bottom:0;">광고 없고, 돈 안 받고, 그냥 씁니다. 🙂</p>
+    </div>
+    <div style="margin-top:24px;padding:16px;background:var(--accent-light);border-radius:var(--r-sm);border:1px solid rgba(37,99,235,.15);font-size:13px;color:var(--text2);line-height:1.7;">
+      🔒 당신의 비번창고는 서버에 비밀번호를 저장하지 않습니다. 모든 데이터는 사용자의 기기에만 저장되며, 백업은 내보내기 기능으로 직접 관리합니다.
+    </div>
+    <div style="margin-top:10px;padding:16px;background:#fff7ed;border-radius:var(--r-sm);border:1px solid rgba(232,93,4,.2);font-size:13px;color:#92400e;line-height:1.7;">
+      ⚠️ <strong>휴대폰 변경, 브라우저 삭제, 앱 삭제 시 데이터가 사라질 수 있으니 반드시 정기적으로 내보내기 백업을 해주세요.</strong>
+    </div>
+    <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);text-align:center;font-size:12px;color:var(--text3);letter-spacing:.3px;">
+      made by <span style="color:var(--text2);font-weight:600;">Junho.Kim</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+let masterKey='', pwEntries=[], songEntries=[], pwEditIdx=-1, songEditIdx=-1, showPw={};
+const PW_SK='kv_pw_v3', SONG_SK='kv_song_v1', MK='kv_master_v3';
+const $=id=>document.getElementById(id);
+
+// ── UTILS ──
+function toast(msg,d=2200){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d);}
+const enc=(d,k)=>CryptoJS.AES.encrypt(JSON.stringify(d),k).toString();
+function dec(s,k){try{return JSON.parse(CryptoJS.AES.decrypt(s,k).toString(CryptoJS.enc.Utf8));}catch{return null;}}
+const hash=pw=>CryptoJS.SHA256(pw).toString();
+const openM=id=>$(id).classList.add('open');
+const closeM=id=>$(id).classList.remove('open');
+const closeAll=()=>['pwAddModal','pwMenuModal','songAddModal','songMenuModal','changePwModal'].forEach(closeM);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const initial=n=>(n||'?').trim().charAt(0).toUpperCase();
+function copyText(txt){navigator.clipboard.writeText(txt).catch(()=>{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);});}
+
+// ── SCREENS ──
+function showScreen(id){
+  ['homeScreen','lockScreen'].forEach(s=>{
+    const el=$(s);
+    if(s===id){el.classList.remove('hidden');}else{el.classList.add('hidden');}
+  });
+  ['pwApp','songApp'].forEach(s=>{
+    const el=$(s);
+    if(s===id){el.classList.add('visible');}else{el.classList.remove('visible');}
+  });
+}
+
+// ── HOME ──
+$('goPwBtn').addEventListener('click',()=>{
+  showScreen('lockScreen');
+  initLock();
+  setTimeout(()=>$('masterInput').focus(),350);
+});
+$('goSongBtn').addEventListener('click',()=>{
+  loadSongs();
+  showScreen('songApp');
+  renderSongs();
+});
+
+// ── LOCK ──
+const isFirst=()=>!localStorage.getItem(MK);
+function initLock(){
+  if(isFirst()){
+    $('lockSub').textContent='처음 사용이시네요!\n마스터 비밀번호를 설정해주세요';
+    $('lockHint').textContent='이 비밀번호를 잊으면 데이터를 복구할 수 없어요';
+    $('lockBtn').textContent='비밀번호 설정';
+  } else {
+    $('lockSub').textContent='마스터 비밀번호를 입력하세요';
+    $('lockHint').textContent='';
+    $('lockBtn').textContent='잠금 해제';
+  }
+  $('lockErr').textContent='';
+  $('masterInput').value='';
+}
+function handleUnlock(){
+  const pw=$('masterInput').value.trim();
+  if(!pw){$('lockErr').textContent='비밀번호를 입력해주세요';return;}
+  if(isFirst()){
+    if(pw.length<4){$('lockErr').textContent='4자 이상 입력해주세요';return;}
+    localStorage.setItem(MK,hash(pw));masterKey=pw;pwEntries=[];
+    savePw();unlockPw();
+  } else {
+    if(hash(pw)!==localStorage.getItem(MK)){
+      $('lockErr').textContent='비밀번호가 틀렸습니다';
+      $('masterInput').classList.add('err');
+      setTimeout(()=>$('masterInput').classList.remove('err'),400);
+      $('masterInput').value='';return;
+    }
+    masterKey=pw;
+    const r=localStorage.getItem(PW_SK);
+    if(r){const d=dec(r,masterKey);if(d===null){$('lockErr').textContent='복호화 실패';return;}pwEntries=d;}
+    else pwEntries=[];
+    unlockPw();
+  }
+}
+function unlockPw(){showScreen('pwApp');renderPw();}
+function lockPw(){masterKey='';pwEntries=[];showScreen('homeScreen');closeAll();}
+$('lockBtn').addEventListener('click',handleUnlock);
+$('masterInput').addEventListener('keydown',e=>{if(e.key==='Enter')handleUnlock();});
+$('lockBackBtn').addEventListener('click',()=>showScreen('homeScreen'));
+$('pwBackBtn').addEventListener('click',()=>lockPw());
+$('songBackBtn').addEventListener('click',()=>showScreen('homeScreen'));
+
+// ── PW STORAGE ──
+function savePw(){localStorage.setItem(PW_SK,enc(pwEntries,masterKey));}
+
+// ── SONG STORAGE ──
+function loadSongs(){const r=localStorage.getItem(SONG_SK);songEntries=r?JSON.parse(r):[];}
+function saveSongs(){localStorage.setItem(SONG_SK,JSON.stringify(songEntries));}
+
+// ── PW STRENGTH ──
+function strength(pw){let s=0;if(pw.length>=8)s++;if(/[A-Z]/.test(pw))s++;if(/[0-9]/.test(pw))s++;if(/[^A-Za-z0-9]/.test(pw))s++;if(pw.length>=12)s++;return s;}
+function updateStr(pw){
+  const s=strength(pw);
+  ['sb1','sb2','sb3'].forEach(id=>{$(id).className='sbar';});
+  const lbl=$('strLabel');
+  if(!pw){lbl.textContent='';return;}
+  if(s<=2){$('sb1').classList.add('w');lbl.textContent='약함';}
+  else if(s<=3){$('sb1').classList.add('m');$('sb2').classList.add('m');lbl.textContent='보통';}
+  else{['sb1','sb2','sb3'].forEach(id=>$(id).classList.add('s'));lbl.textContent='강함 👍';}
+}
+function genPw(){const c='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';return Array.from({length:16},()=>c[Math.floor(Math.random()*c.length)]).join('');}
+$('genBtn').addEventListener('click',()=>{const p=genPw();$('fPw').value=p;updateStr(p);});
+$('fPw').addEventListener('input',e=>updateStr(e.target.value));
+
+// ── RENDER PW ──
+function renderPw(){
+  const q=$('pwSearch').value.toLowerCase();
+  let list=pwEntries.filter(e=>e.name.toLowerCase().includes(q)||(e.id||'').toLowerCase().includes(q)||(e.memo||'').toLowerCase().includes(q));
+  const starred=list.filter(e=>e.starred),normal=list.filter(e=>!e.starred);
+  const wrap=$('pwList');wrap.innerHTML='';
+  $('pwCount').textContent=pwEntries.length?`총 ${pwEntries.length}개 저장됨`:'';
+  if(!list.length){wrap.innerHTML=`<div class="empty"><div class="empty-icon">🔑</div><div class="empty-text">${q?'검색 결과 없음':'저장된 항목이 없어요'}</div><div class="empty-sub">${q?'다른 검색어를 시도해보세요':'아래 + 버튼을 눌러 추가하세요'}</div></div>`;return;}
+  function sec(arr,label){
+    if(!arr.length)return;
+    if(label){const d=document.createElement('div');d.className='list-section-label';d.textContent=label;wrap.appendChild(d);}
+    arr.forEach(e=>wrap.appendChild(makePwItem(e,pwEntries.indexOf(e))));
+  }
+  if(starred.length)sec(starred,'⭐ 즐겨찾기');
+  sec(normal,starred.length?'전체':'');
+}
+
+function makePwItem(entry,idx){
+  const div=document.createElement('div');div.className='list-item';
+  const hidden=!showPw[idx];
+  div.innerHTML=`
+    <div class="list-item-main">
+      <div class="item-icon pw">${esc(initial(entry.name))}</div>
+      <div class="item-info">
+        <div class="item-name">${esc(entry.name)}</div>
+        <div class="item-sub mono">${esc(entry.id||'아이디 없음')}</div>
+      </div>
+      <div class="item-right">
+        <button class="star-btn ${entry.starred?'on':''}">${entry.starred?'⭐':'☆'}</button>
+        <button class="chevron">⌄</button>
+      </div>
+    </div>
+    <div class="item-expand" id="pexp-${idx}">
+      <div class="exp-row"><div class="exp-label">ID</div><div class="exp-val">${esc(entry.id||'-')}</div></div>
+      <div class="exp-row">
+        <div class="exp-label">PW</div>
+        <div class="exp-val ${hidden?'hide':''}" id="ppv-${idx}">${hidden?'••••••••':esc(entry.pw||'-')}</div>
+        <button class="pw-eye" id="ppe-${idx}">${hidden?'👁️':'🙈'}</button>
+      </div>
+      ${entry.memo?`<div class="exp-memo">📝 ${esc(entry.memo)}</div>`:''}
+      <div class="copy-row">
+        <button class="cbtn" data-t="id">📋 아이디</button>
+        <button class="cbtn" data-t="pw">🔒 비번</button>
+        <button class="cbtn all" data-t="all">📤 한번에</button>
+      </div>
+      <div class="act-row">
+        <button class="abtn mod">✏️ 수정</button>
+        <button class="abtn del">🗑️ 삭제</button>
+      </div>
+    </div>`;
+  div.querySelector('.star-btn').addEventListener('click',e=>{e.stopPropagation();pwEntries[idx].starred=!pwEntries[idx].starred;savePw();renderPw();});
+  const ch=div.querySelector('.chevron');
+  ch.addEventListener('click',e=>{e.stopPropagation();div.querySelector('.item-expand').classList.toggle('open');ch.classList.toggle('open');});
+  div.querySelector(`#ppe-${idx}`).addEventListener('click',e=>{
+    e.stopPropagation();showPw[idx]=!showPw[idx];
+    const v=div.querySelector(`#ppv-${idx}`);
+    if(showPw[idx]){v.textContent=entry.pw||'-';v.classList.remove('hide');}
+    else{v.textContent='••••••••';v.classList.add('hide');}
+    e.currentTarget.textContent=showPw[idx]?'🙈':'👁️';
+  });
+  div.querySelectorAll('.cbtn').forEach(btn=>{
+    btn.addEventListener('click',e=>{
+      e.stopPropagation();
+      const t=btn.dataset.t;
+      if(t==='id'){copyText(entry.id||'');toast('아이디 복사됨!');}
+      else if(t==='pw'){copyText(entry.pw||'');toast('비번 복사됨!');}
+      else{copyText(`사이트: ${entry.name}\n아이디: ${entry.id||'-'}\n비밀번호: ${entry.pw||'-'}${entry.memo?'\n메모: '+entry.memo:''}`);toast('한번에 복사됨! 📤');}
+    });
+  });
+  div.querySelector('.abtn.mod').addEventListener('click',e=>{e.stopPropagation();openPwEdit(idx);});
+  div.querySelector('.abtn.del').addEventListener('click',e=>{
+    e.stopPropagation();
+    if(confirm(`"${entry.name}" 삭제할까요?`)){pwEntries.splice(idx,1);delete showPw[idx];savePw();renderPw();toast('삭제됨');}
+  });
+  return div;
+}
+
+// ── PW ADD/EDIT ──
+$('pwFab').addEventListener('click',()=>{
+  pwEditIdx=-1;$('pwAddTitle').textContent='새 항목 추가';$('pwSaveBtn').textContent='저장';
+  ['fName','fId','fPw','fMemo'].forEach(id=>$(id).value='');updateStr('');
+  openM('pwAddModal');setTimeout(()=>$('fName').focus(),350);
+});
+function openPwEdit(idx){
+  pwEditIdx=idx;const e=pwEntries[idx];
+  $('pwAddTitle').textContent='수정';$('pwSaveBtn').textContent='수정 저장';
+  $('fName').value=e.name||'';$('fId').value=e.id||'';$('fPw').value=e.pw||'';$('fMemo').value=e.memo||'';
+  updateStr(e.pw||'');openM('pwAddModal');
+}
+$('pwSaveBtn').addEventListener('click',()=>{
+  const name=$('fName').value.trim(),id=$('fId').value.trim(),pw=$('fPw').value.trim(),memo=$('fMemo').value.trim();
+  if(!name){toast('사이트/앱 이름을 입력해주세요');return;}
+  if(pwEditIdx>=0){pwEntries[pwEditIdx]={...pwEntries[pwEditIdx],name,id,pw,memo};toast('수정됨 ✓');}
+  else{pwEntries.unshift({name,id,pw,memo,starred:false,created:Date.now()});toast('저장됨 ✓');}
+  savePw();renderPw();closeM('pwAddModal');
+});
+$('pwSearch').addEventListener('input',()=>renderPw());
+$('pwMenuBtn').addEventListener('click',()=>openM('pwMenuModal'));
+
+// ── RENDER SONGS ──
+function renderSongs(){
+  const q=$('songSearch').value.toLowerCase();
+  let list=songEntries.filter(e=>e.title.toLowerCase().includes(q)||(e.artist||'').toLowerCase().includes(q)||(e.num||'').includes(q));
+  const starred=list.filter(e=>e.starred),normal=list.filter(e=>!e.starred);
+  const wrap=$('songList');wrap.innerHTML='';
+  $('songCount').textContent=songEntries.length?`총 ${songEntries.length}곡 저장됨`:'';
+  if(!list.length){wrap.innerHTML=`<div class="empty"><div class="empty-icon">🎤</div><div class="empty-text">${q?'검색 결과 없음':'저장된 노래가 없어요'}</div><div class="empty-sub">${q?'다른 검색어를 시도해보세요':'아래 + 버튼을 눌러 내 18번을 추가해보세요'}</div></div>`;return;}
+  function sec(arr,label){
+    if(!arr.length)return;
+    if(label){const d=document.createElement('div');d.className='list-section-label';d.textContent=label;wrap.appendChild(d);}
+    arr.forEach(e=>wrap.appendChild(makeSongItem(e,songEntries.indexOf(e))));
+  }
+  if(starred.length)sec(starred,'⭐ 18번');
+  sec(normal,starred.length?'전체':'');
+}
+
+function makeSongItem(entry,idx){
+  const div=document.createElement('div');div.className='list-item';
+  div.innerHTML=`
+    <div class="list-item-main">
+      <div class="item-icon song">♪</div>
+      <div class="item-info">
+        <div class="item-name">${esc(entry.title)}</div>
+        <div class="item-sub">${esc(entry.artist||'가수 미입력')}${entry.num?` &nbsp;<span class="song-num">${esc(entry.num)}</span>`:''}</div>
+      </div>
+      <div class="item-right">
+        <button class="star-btn ${entry.starred?'on':''}">${entry.starred?'⭐':'☆'}</button>
+        <button class="chevron">⌄</button>
+      </div>
+    </div>
+    <div class="item-expand" id="sexp-${idx}">
+      ${entry.num?`<div class="exp-row"><div class="exp-label">번호</div><div class="exp-val normal"><span class="song-num">${esc(entry.num)}</span></div></div>`:''}
+      ${entry.artist?`<div class="exp-row"><div class="exp-label">가수</div><div class="exp-val normal">${esc(entry.artist)}</div></div>`:''}
+      ${entry.memo?`<div class="exp-memo">📝 ${esc(entry.memo)}</div>`:''}
+      <div class="copy-row">
+        <button class="cbtn" data-t="title">📋 제목 복사</button>
+        <button class="cbtn all" data-t="all">📤 한번에 복사</button>
+      </div>
+      <div class="act-row">
+        <button class="abtn mod song">✏️ 수정</button>
+        <button class="abtn del">🗑️ 삭제</button>
+      </div>
+    </div>`;
+  div.querySelector('.star-btn').addEventListener('click',e=>{e.stopPropagation();songEntries[idx].starred=!songEntries[idx].starred;saveSongs();renderSongs();});
+  const ch=div.querySelector('.chevron');
+  ch.addEventListener('click',e=>{e.stopPropagation();div.querySelector('.item-expand').classList.toggle('open');ch.classList.toggle('open');});
+  div.querySelectorAll('.cbtn').forEach(btn=>{
+    btn.addEventListener('click',e=>{
+      e.stopPropagation();
+      const t=btn.dataset.t;
+      if(t==='title'){copyText(entry.title);toast('제목 복사됨!');}
+      else{copyText(`노래: ${entry.title}\n가수: ${entry.artist||'-'}${entry.num?'\n번호: '+entry.num:''}${entry.memo?'\n메모: '+entry.memo:''}`);toast('한번에 복사됨! 📤');}
+    });
+  });
+  div.querySelector('.abtn.mod').addEventListener('click',e=>{e.stopPropagation();openSongEdit(idx);});
+  div.querySelector('.abtn.del').addEventListener('click',e=>{
+    e.stopPropagation();
+    if(confirm(`"${entry.title}" 삭제할까요?`)){songEntries.splice(idx,1);saveSongs();renderSongs();toast('삭제됨');}
+  });
+  return div;
+}
+
+// ── SONG ADD/EDIT ──
+$('songFab').addEventListener('click',()=>{
+  songEditIdx=-1;$('songAddTitle').textContent='노래 추가';$('songSaveBtn').textContent='저장';
+  ['sTitle','sArtist','sNum','sMemo'].forEach(id=>$(id).value='');
+  openM('songAddModal');setTimeout(()=>$('sTitle').focus(),350);
+});
+function openSongEdit(idx){
+  songEditIdx=idx;const e=songEntries[idx];
+  $('songAddTitle').textContent='수정';$('songSaveBtn').textContent='수정 저장';
+  $('sTitle').value=e.title||'';$('sArtist').value=e.artist||'';$('sNum').value=e.num||'';$('sMemo').value=e.memo||'';
+  openM('songAddModal');
+}
+$('songSaveBtn').addEventListener('click',()=>{
+  const title=$('sTitle').value.trim(),artist=$('sArtist').value.trim(),num=$('sNum').value.trim(),memo=$('sMemo').value.trim();
+  if(!title){toast('노래 제목을 입력해주세요');return;}
+  if(songEditIdx>=0){songEntries[songEditIdx]={...songEntries[songEditIdx],title,artist,num,memo};toast('수정됨 ✓');}
+  else{songEntries.unshift({title,artist,num,memo,starred:false,created:Date.now()});toast('저장됨 ✓');}
+  saveSongs();renderSongs();closeM('songAddModal');
+});
+$('songSearch').addEventListener('input',()=>renderSongs());
+$('songMenuBtn').addEventListener('click',()=>openM('songMenuModal'));
+
+// ── PW MENU ──
+$('pwExportBtn').addEventListener('click',()=>{
+  if(!pwEntries.length){toast('저장된 항목이 없어요');return;}
+  const data=pwEntries.map(e=>({'사이트/앱':e.name,'아이디':e.id||'','비밀번호':e.pw||'','메모':e.memo||'','즐겨찾기':e.starred?'Y':''}));
+  const ws=XLSX.utils.json_to_sheet(data);ws['!cols']=[{wch:22},{wch:26},{wch:20},{wch:30},{wch:8}];
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,'비밀번호',ws);
+  XLSX.writeFile(wb,`비밀번호_백업_${new Date().toISOString().slice(0,10)}.xlsx`);
+  closeM('pwMenuModal');toast('엑셀 내보내기 완료 📊');
+});
+$('pwImportBtn').addEventListener('click',()=>$('fileInput').click());
+$('fileInput').addEventListener('change',e=>{
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const wb=XLSX.read(ev.target.result,{type:'array'});
+      const ws=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws);let added=0;
+      rows.forEach(r=>{
+        const name=(r['사이트/앱']||r['사이트']||r['name']||'').toString().trim();
+        if(name){pwEntries.push({name,id:(r['아이디']||r['id']||'').toString().trim(),pw:(r['비밀번호']||r['password']||'').toString().trim(),memo:(r['메모']||'').toString().trim(),starred:false,created:Date.now()});added++;}
+      });
+      savePw();renderPw();closeM('pwMenuModal');toast(`${added}개 가져오기 완료 📥`);
+    }catch{toast('파일을 읽을 수 없어요');}
+    e.target.value='';
+  };
+  reader.readAsArrayBuffer(file);
+});
+$('changePwBtn').addEventListener('click',()=>{closeM('pwMenuModal');['cpCur','cpNew','cpCfm'].forEach(id=>$(id).value='');openM('changePwModal');});
+$('cpSave').addEventListener('click',()=>{
+  const cur=$('cpCur').value,nw=$('cpNew').value,cf=$('cpCfm').value;
+  if(hash(cur)!==localStorage.getItem(MK)){toast('현재 비밀번호가 틀렸어요');return;}
+  if(nw.length<4){toast('4자 이상 입력해주세요');return;}
+  if(nw!==cf){toast('새 비밀번호가 일치하지 않아요');return;}
+  localStorage.setItem(MK,hash(nw));masterKey=nw;savePw();closeM('changePwModal');toast('비밀번호 변경됨 🔑');
+});
+$('lockMenuBtn').addEventListener('click',()=>lockPw());
+$('aboutBtn').addEventListener('click',()=>{closeM('pwMenuModal');openM('aboutModal');});
+$('pwDeleteAllBtn').addEventListener('click',()=>{
+  if(confirm('비번 전체 삭제할까요? 복구 불가!')){if(confirm('정말요?')){pwEntries=[];localStorage.removeItem(PW_SK);renderPw();closeM('pwMenuModal');toast('전체 삭제됨');}}
+});
+
+// ── SONG MENU ──
+$('songExportBtn').addEventListener('click',()=>{
+  if(!songEntries.length){toast('저장된 노래가 없어요');return;}
+  const data=songEntries.map(e=>({'제목':e.title,'가수':e.artist||'','번호':e.num||'','메모':e.memo||'','18번':e.starred?'Y':''}));
+  const ws=XLSX.utils.json_to_sheet(data);ws['!cols']=[{wch:24},{wch:18},{wch:10},{wch:30},{wch:6}];
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,'노래목록',ws);
+  XLSX.writeFile(wb,`노래목록_${new Date().toISOString().slice(0,10)}.xlsx`);
+  closeM('songMenuModal');toast('노래 목록 내보내기 완료 🎤');
+});
+$('songImportBtn').addEventListener('click',()=>$('songFileInput').click());
+$('songFileInput').addEventListener('change',e=>{
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const wb=XLSX.read(ev.target.result,{type:'array'});
+      const ws=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws);let added=0;
+      rows.forEach(r=>{
+        const title=(r['제목']||r['title']||'').toString().trim();
+        if(title){songEntries.push({title,artist:(r['가수']||r['artist']||'').toString().trim(),num:(r['번호']||r['num']||'').toString().trim(),memo:(r['메모']||'').toString().trim(),starred:false,created:Date.now()});added++;}
+      });
+      saveSongs();renderSongs();closeM('songMenuModal');toast(`${added}곡 가져오기 완료 🎤`);
+    }catch{toast('파일을 읽을 수 없어요');}
+    e.target.value='';
+  };
+  reader.readAsArrayBuffer(file);
+});
+$('songDeleteAllBtn').addEventListener('click',()=>{
+  if(confirm('노래 전체 삭제할까요?')){if(confirm('정말요?')){songEntries=[];localStorage.removeItem(SONG_SK);renderSongs();closeM('songMenuModal');toast('전체 삭제됨');}}
+});
+
+// ── CLOSE MODALS ──
+document.querySelectorAll('.modal-overlay').forEach(ov=>{ov.addEventListener('click',e=>{if(e.target===ov)closeM(ov.id);});});
+
+// ── INIT ──
+showScreen('homeScreen');
+</script>
+</body>
+</html>
