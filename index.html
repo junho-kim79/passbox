@@ -28,6 +28,7 @@
   --bg:#f4f4f0;--white:#fff;--surface:#fafaf8;--border:#e6e6e0;--border2:#d4d4cc;
   --accent:#2563eb;--accent-light:#eff6ff;--accent2:#1d4ed8;
   --song:#e85d04;--song-light:#fff4ee;--song2:#c04b02;
+  --tj:#7c3aed;--tj-light:#f5f3ff;--tj2:#6d28d9;
   --green:#16a34a;--red:#dc2626;--yellow:#d97706;
   --text:#1a1a1a;--text2:#555;--text3:#999;
   --mono:'DM Mono',monospace;--sans:'Noto Sans KR',sans-serif;
@@ -65,6 +66,95 @@ body{
 .modal-overlay.open .modal-box{transform:translateY(0);}
 .modal-handle{width:38px;height:4px;background:var(--border2);border-radius:99px;margin:0 auto 22px;}
 .modal-title{font-size:18px;font-weight:700;margin-bottom:20px;}
+
+/* ── 검색 팝업 모달 (전체화면) ── */
+.search-modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.6);
+  display:flex;align-items:center;justify-content:center;
+  z-index:900;opacity:0;pointer-events:none;transition:opacity .25s;
+  padding:16px;
+}
+.search-modal-overlay.open{opacity:1;pointer-events:all;}
+.search-modal-box{
+  background:var(--white);border-radius:16px;
+  width:100%;max-width:500px;
+  height:90vh;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  transform:translateY(30px);transition:transform .3s cubic-bezier(.32,1,.23,1);
+}
+.search-modal-overlay.open .search-modal-box{transform:translateY(0);}
+.search-modal-header{
+  padding:16px 18px 12px;
+  border-bottom:1px solid var(--border);
+  display:flex;flex-direction:column;gap:10px;
+  flex-shrink:0;
+}
+.search-modal-title{font-size:16px;font-weight:700;}
+.search-tab-row{display:flex;gap:8px;}
+.search-tab{
+  flex:1;padding:9px;border-radius:var(--r-sm);
+  border:1.5px solid var(--border);background:var(--surface);
+  font-size:13px;font-weight:600;font-family:var(--sans);cursor:pointer;
+  transition:all .15s;color:var(--text2);
+}
+.search-tab.ky.active{background:var(--song-light);border-color:var(--song);color:var(--song);}
+.search-tab.tj.active{background:var(--tj-light);border-color:var(--tj);color:var(--tj);}
+.search-modal-input-row{display:flex;gap:8px;}
+.search-modal-input{
+  flex:1;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--r-sm);
+  font-size:14px;font-family:var(--sans);background:var(--surface);color:var(--text);
+  outline:none;transition:border .2s;
+}
+.search-modal-input:focus{border-color:var(--song);}
+.search-modal-btn{
+  padding:10px 16px;border:none;border-radius:var(--r-sm);
+  font-size:13px;font-weight:700;font-family:var(--sans);cursor:pointer;
+  background:var(--song);color:#fff;transition:all .15s;
+}
+.search-modal-btn.tj{background:var(--tj);}
+.search-modal-btn:active{opacity:.85;}
+.search-modal-close{
+  width:32px;height:32px;border:none;background:var(--surface);border-radius:50%;
+  font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--text2);flex-shrink:0;align-self:flex-start;
+}
+
+/* 검색 결과 */
+.search-results{
+  flex:1;overflow-y:auto;padding:8px 14px;
+}
+.search-result-item{
+  display:flex;align-items:center;padding:12px 10px;
+  border-bottom:1px solid var(--border);gap:10px;
+  cursor:pointer;transition:background .15s;border-radius:var(--r-sm);
+}
+.search-result-item:hover{background:var(--surface);}
+.search-result-num{
+  font-family:var(--mono);font-size:13px;font-weight:600;
+  padding:3px 8px;border-radius:99px;flex-shrink:0;
+}
+.search-result-num.ky{background:var(--song-light);color:var(--song);border:1px solid rgba(232,93,4,.2);}
+.search-result-num.tj{background:var(--tj-light);color:var(--tj);border:1px solid rgba(124,58,237,.2);}
+.search-result-info{flex:1;min-width:0;}
+.search-result-title{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.search-result-artist{font-size:12px;color:var(--text3);margin-top:2px;}
+.search-result-pick{
+  padding:6px 12px;border:none;border-radius:var(--r-sm);
+  font-size:12px;font-weight:700;font-family:var(--sans);cursor:pointer;
+  flex-shrink:0;
+}
+.search-result-pick.ky{background:var(--song-light);color:var(--song);}
+.search-result-pick.tj{background:var(--tj-light);color:var(--tj);}
+.search-loading{text-align:center;padding:40px;color:var(--text3);font-size:14px;}
+.search-empty{text-align:center;padding:40px;color:var(--text3);}
+.search-empty-icon{font-size:36px;margin-bottom:8px;}
+.search-guide{
+  padding:20px;text-align:center;
+}
+.search-guide-icon{font-size:40px;margin-bottom:10px;}
+.search-guide-text{font-size:14px;color:var(--text2);line-height:1.8;}
+.search-guide-sub{font-size:12px;color:var(--text3);margin-top:6px;}
 
 /* ── HOME ── */
 #homeScreen{
@@ -131,10 +221,7 @@ body{
 /* ── COMMON APP ── */
 .app-screen{display:none;flex-direction:column;min-height:100vh;}
 .app-screen.visible{display:flex;}
-
 .header{background:var(--white);border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:0;z-index:100;}
-.header.pw-header{background:var(--white);}
-.header.song-header{background:var(--white);}
 .header-top{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;}
 .header-title{font-size:19px;font-weight:700;letter-spacing:-.3px;}
 .header-count{font-size:12px;color:var(--text3);margin-top:1px;}
@@ -157,34 +244,23 @@ body{
 .search-input:focus{border-color:var(--accent);}
 .search-input.song:focus{border-color:var(--song);}
 .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text3);}
-
 .fab{
   position:fixed;bottom:28px;right:calc(50% - var(--max-w)/2 + 20px);width:56px;height:56px;
   color:#fff;border:none;border-radius:50%;font-size:28px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   transition:transform .15s,box-shadow .15s;z-index:200;
 }
-@media(max-width:430px){
-  .fab{right:20px;}
-}
+@media(max-width:430px){.fab{right:20px;}}
 .fab.pw-fab{background:var(--accent);box-shadow:0 4px 16px rgba(37,99,235,.35);}
 .fab.song-fab{background:var(--song);box-shadow:0 4px 16px rgba(232,93,4,.35);}
 .fab:active{transform:scale(.92);}
-
 .list-wrap{padding:8px 14px 100px;display:flex;flex-direction:column;}
 .list-section-label{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;padding:12px 2px 6px;}
 
-/* ── PW LIST ITEM ── */
-.list-item{
-  background:var(--white);border-radius:var(--r);border:1px solid var(--border);
-  margin-bottom:8px;overflow:hidden;
-}
+/* ── LIST ITEMS ── */
+.list-item{background:var(--white);border-radius:var(--r);border:1px solid var(--border);margin-bottom:8px;overflow:hidden;}
 .list-item-main{display:flex;align-items:center;padding:13px 14px;gap:12px;cursor:pointer;}
-.item-icon{
-  width:42px;height:42px;border-radius:11px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:17px;font-weight:700;font-family:var(--mono);flex-shrink:0;
-}
+.item-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;font-family:var(--mono);flex-shrink:0;}
 .item-icon.pw{background:var(--accent-light);color:var(--accent);}
 .item-icon.song{background:var(--song-light);color:var(--song);}
 .item-info{flex:1;min-width:0;}
@@ -196,7 +272,6 @@ body{
 .star-btn.on{color:var(--yellow);}
 .chevron{background:none;border:none;cursor:pointer;font-size:20px;color:var(--text3);padding:4px;transition:transform .2s;line-height:1;}
 .chevron.open{transform:rotate(180deg);}
-
 .item-expand{border-top:1px solid var(--border);padding:14px;display:none;flex-direction:column;gap:10px;background:var(--surface);}
 .item-expand.open{display:flex;}
 .exp-row{display:flex;align-items:center;gap:8px;}
@@ -206,11 +281,7 @@ body{
 .exp-val.normal{font-family:var(--sans);}
 .pw-eye{background:none;border:none;cursor:pointer;font-size:15px;color:var(--text3);padding:2px 4px;}
 .copy-row{display:flex;gap:6px;flex-wrap:wrap;}
-.cbtn{
-  flex:1;min-width:80px;padding:9px 6px;border:1.5px solid var(--border);background:var(--white);
-  border-radius:var(--r-sm);font-size:12px;font-weight:600;font-family:var(--sans);
-  cursor:pointer;color:var(--text2);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:3px;
-}
+.cbtn{flex:1;min-width:80px;padding:9px 6px;border:1.5px solid var(--border);background:var(--white);border-radius:var(--r-sm);font-size:12px;font-weight:600;font-family:var(--sans);cursor:pointer;color:var(--text2);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:3px;}
 .cbtn:active{background:var(--border);}
 .cbtn.all{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
 .cbtn.all:active{background:#dbeafe;}
@@ -222,12 +293,9 @@ body{
 .abtn.mod.song{color:var(--song);}
 .abtn.del{color:var(--red);}
 
-/* ── SONG ITEM ── */
-.song-num{
-  display:inline-block;font-family:var(--mono);font-size:12px;font-weight:600;
-  background:var(--song-light);color:var(--song);padding:2px 8px;border-radius:99px;
-  border:1px solid rgba(232,93,4,.2);
-}
+/* ── SONG NUM BADGES ── */
+.song-num-ky{display:inline-block;font-family:var(--mono);font-size:12px;font-weight:600;background:var(--song-light);color:var(--song);padding:2px 8px;border-radius:99px;border:1px solid rgba(232,93,4,.2);}
+.song-num-tj{display:inline-block;font-family:var(--mono);font-size:12px;font-weight:600;background:var(--tj-light);color:var(--tj);padding:2px 8px;border-radius:99px;border:1px solid rgba(124,58,237,.2);}
 
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:72px 32px;color:var(--text3);gap:10px;}
 .empty-icon{font-size:46px;opacity:.35;}
@@ -237,35 +305,47 @@ body{
 /* ── FORM ── */
 .fg{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
 .fl{font-size:13px;font-weight:600;color:var(--text2);}
-.fi{
-  width:100%;padding:13px 14px;border:1.5px solid var(--border);border-radius:var(--r-sm);
-  font-size:15px;font-family:var(--sans);background:var(--surface);color:var(--text);
-  outline:none;transition:border .2s;
-}
+.fi{width:100%;padding:13px 14px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:15px;font-family:var(--sans);background:var(--surface);color:var(--text);outline:none;transition:border .2s;}
 .fi:focus{border-color:var(--accent);}
 .fi.song-fi:focus{border-color:var(--song);}
 .fi.mono{font-family:var(--mono);letter-spacing:1px;}
 .pw-row{display:flex;gap:8px;}
 .pw-row .fi{flex:1;}
-.gen-btn{
-  padding:0 14px;background:var(--accent-light);color:var(--accent);border:1.5px solid var(--accent);
-  border-radius:var(--r-sm);font-size:13px;font-weight:700;font-family:var(--sans);cursor:pointer;transition:all .15s;
-}
+.gen-btn{padding:0 14px;background:var(--accent-light);color:var(--accent);border:1.5px solid var(--accent);border-radius:var(--r-sm);font-size:13px;font-weight:700;font-family:var(--sans);cursor:pointer;transition:all .15s;}
 .gen-btn:active{background:#dbeafe;}
 textarea.fi{resize:none;min-height:76px;line-height:1.5;}
 .str-bars{display:flex;gap:4px;margin-top:5px;}
 .sbar{height:3px;flex:1;border-radius:99px;background:var(--border);transition:background .3s;}
 .sbar.w{background:var(--red);}.sbar.m{background:var(--yellow);}.sbar.s{background:var(--green);}
 .str-label{font-size:11px;color:var(--text3);margin-top:3px;}
-.form-btn{
-  width:100%;padding:15px;color:#fff;border:none;border-radius:var(--r);
-  font-size:16px;font-weight:700;font-family:var(--sans);cursor:pointer;transition:all .15s;margin-top:2px;
-}
+.form-btn{width:100%;padding:15px;color:#fff;border:none;border-radius:var(--r);font-size:16px;font-weight:700;font-family:var(--sans);cursor:pointer;transition:all .15s;margin-top:2px;}
 .form-btn.pw-btn{background:var(--accent);}
 .form-btn.pw-btn:active{background:var(--accent2);}
 .form-btn.song-btn{background:var(--song);}
 .form-btn.song-btn:active{background:var(--song2);}
 .form-btn:active{transform:scale(.98);}
+
+/* 기기 선택 버튼 */
+.machine-row{display:flex;gap:8px;margin-bottom:4px;}
+.machine-btn{
+  flex:1;padding:10px 6px;border:1.5px solid var(--border);background:var(--surface);
+  border-radius:var(--r-sm);font-size:13px;font-weight:600;font-family:var(--sans);
+  cursor:pointer;color:var(--text2);transition:all .15s;text-align:center;
+}
+.machine-btn.ky.active{background:var(--song-light);border-color:var(--song);color:var(--song);}
+.machine-btn.tj.active{background:var(--tj-light);border-color:var(--tj);color:var(--tj);}
+.machine-btn.both.active{background:#f0fdf4;border-color:var(--green);color:var(--green);}
+
+/* 번호 입력 행 */
+.num-input-row{display:flex;gap:8px;align-items:center;}
+.num-input-row .fi{flex:1;}
+.search-open-btn{
+  padding:11px 12px;border:1.5px solid var(--border);background:var(--surface);
+  border-radius:var(--r-sm);font-size:13px;font-weight:600;font-family:var(--sans);
+  cursor:pointer;white-space:nowrap;transition:all .15s;color:var(--text2);
+}
+.search-open-btn.ky{border-color:var(--song);background:var(--song-light);color:var(--song);}
+.search-open-btn.tj{border-color:var(--tj);background:var(--tj-light);color:var(--tj);}
 
 /* ── MENU ── */
 .menu-list{display:flex;flex-direction:column;gap:6px;}
@@ -279,6 +359,7 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
 .mi.danger .mi-title{color:var(--red);}
 
 #fileInput{display:none;}
+#songFileInput{display:none;}
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px;}
 </style>
@@ -306,16 +387,13 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
       <div class="door-icon">🎤</div>
       <div class="door-info">
         <div class="door-name">노래창고</div>
-        <div class="door-desc">내 노래 목록 관리</div>
+        <div class="door-desc">금영 · TJ 곡번호 관리</div>
       </div>
     </button>
   </div>
   <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border);width:100%;max-width:300px;text-align:center;">
     <div style="font-size:12px;color:var(--text3);line-height:1.9;">
       살다 보면 말하진 못해도 꼭 필요한 게 있습니다.<br>
-      전부 유료. 광고. 또 유료. 또 광고. 😤<br>
-      <strong style="color:var(--text2);">빡쳐서 제가 개발해서 만들었습니다.</strong><br>
-      광고 없고, 돈 안 받고, 그냥 씁니다. 🙂
     </div>
   </div>
   <div class="home-credit">made by <span>Junho.Kim</span></div>
@@ -418,9 +496,54 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
     <div class="modal-title" id="songAddTitle">노래 추가</div>
     <div class="fg"><div class="fl">노래 제목</div><input type="text" class="fi song-fi" id="sTitle" placeholder="예) 사랑은 늘 도망가"></div>
     <div class="fg"><div class="fl">가수</div><input type="text" class="fi song-fi" id="sArtist" placeholder="예) 임영웅"></div>
-    <div class="fg"><div class="fl">번호 <span style="font-weight:400;color:var(--text3)">(선택 — 노래방 기기 번호)</span></div><input type="text" class="fi song-fi mono" id="sNum" placeholder="예) 12345" inputmode="numeric"></div>
+
+    <!-- 금영 번호 -->
+    <div class="fg">
+      <div class="fl" style="color:var(--song);">🎵 금영 곡번호</div>
+      <div class="num-input-row">
+        <input type="text" class="fi song-fi mono" id="sNumKY" placeholder="예) 12345" inputmode="numeric">
+        <button class="search-open-btn ky" onclick="openSongSearch('ky')">🔍 금영 검색</button>
+      </div>
+    </div>
+
+    <!-- TJ 번호 -->
+    <div class="fg">
+      <div class="fl" style="color:var(--tj);">🎵 TJ 곡번호</div>
+      <div class="num-input-row">
+        <input type="text" class="fi mono" id="sNumTJ" placeholder="예) 67890" inputmode="numeric">
+        <button class="search-open-btn tj" onclick="openSongSearch('tj')">🔍 TJ 검색</button>
+      </div>
+    </div>
+
     <div class="fg"><div class="fl">메모 <span style="font-weight:400;color:var(--text3)">(선택)</span></div><textarea class="fi song-fi" id="sMemo" placeholder="예) 2절부터 어려움, 키 낮춰서 부르기..."></textarea></div>
     <button class="form-btn song-btn" id="songSaveBtn">저장</button>
+  </div>
+</div>
+
+<!-- ── 금영/TJ 검색 팝업 ── -->
+<div class="search-modal-overlay" id="songSearchModal">
+  <div class="search-modal-box">
+    <div class="search-modal-header">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="search-modal-title" id="searchModalTitle">🎵 노래 검색</div>
+        <button class="search-modal-close" onclick="closeSongSearch()">✕</button>
+      </div>
+      <div class="search-tab-row">
+        <button class="search-tab ky active" id="searchTabKY" onclick="switchSearchTab('ky')">🎵 금영</button>
+        <button class="search-tab tj" id="searchTabTJ" onclick="switchSearchTab('tj')">🎵 TJ</button>
+      </div>
+      <div class="search-modal-input-row">
+        <input type="text" class="search-modal-input" id="searchModalInput" placeholder="제목 또는 가수 입력..." onkeydown="if(event.key==='Enter')doSearch()">
+        <button class="search-modal-btn" id="searchModalBtn" onclick="doSearch()">검색</button>
+      </div>
+    </div>
+    <div class="search-results" id="searchResults">
+      <div class="search-guide">
+        <div class="search-guide-icon">🎤</div>
+        <div class="search-guide-text">제목이나 가수 이름으로 검색하세요</div>
+        <div class="search-guide-sub">결과에서 곡번호를 확인하고 선택하면<br>자동으로 입력됩니다</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -473,50 +596,22 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
   <div class="modal-box">
     <div class="modal-handle"></div>
     <div class="modal-title">💬 앱 소개</div>
-
-    <!-- 보안 박스 -->
     <div style="margin-bottom:10px;padding:20px;background:var(--accent-light);border-radius:var(--r);border:2px solid var(--accent);">
       <div style="font-size:22px;margin-bottom:8px;">🔒</div>
       <div style="font-size:15px;font-weight:700;color:var(--accent);margin-bottom:6px;">서버 저장 없음</div>
       <div style="font-size:13px;color:var(--text2);line-height:1.7;">당신의 비번창고는 서버에 비밀번호를 저장하지 않습니다. 모든 데이터는 사용자의 기기에만 저장되며, 백업은 내보내기 기능으로 직접 관리합니다.</div>
     </div>
-
-    <!-- 경고 박스 -->
     <div style="margin-bottom:20px;padding:20px;background:#fff7ed;border-radius:var(--r);border:2px solid var(--song);">
       <div style="font-size:22px;margin-bottom:8px;">⚠️</div>
       <div style="font-size:15px;font-weight:700;color:var(--song);margin-bottom:6px;">백업 필수!</div>
       <div style="font-size:13px;color:#92400e;line-height:1.7;">휴대폰 변경, 브라우저 삭제, 앱 삭제 시 데이터가 사라질 수 있으니 반드시 정기적으로 내보내기 백업을 해주세요.</div>
     </div>
-
-    <!-- 핵심 포인트 -->
-    <div style="margin-bottom:20px;padding:20px;background:var(--surface);border-radius:var(--r);border:1.5px solid var(--border);">
-      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px;">✅ 핵심 포인트</div>
-      <div style="display:flex;flex-direction:column;gap:10px;">
-        <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text2);">
-          <span style="font-size:18px;">🛡️</span> 서버 저장 <strong style="color:var(--red);">❌</strong> — 내 기기에만 저장
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text2);">
-          <span style="font-size:18px;">🔐</span> 해킹 위험 최소화
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text2);">
-          <span style="font-size:18px;">📊</span> 엑셀 내보내기 · 가져오기 백업 가능
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text2);">
-          <span style="font-size:18px;">👆</span> 누구나 바로 사용 가능
-        </div>
-      </div>
-    </div>
-
-    <!-- 개발 배경 -->
     <div style="padding:20px;background:var(--surface);border-radius:var(--r);border:1.5px solid var(--border);margin-bottom:24px;line-height:1.9;color:var(--text2);font-size:14px;">
       <p style="margin-bottom:10px;">살다 보면 <strong style="color:var(--text)">말하진 못해도 꼭 필요한 게</strong> 있습니다.</p>
       <p style="margin-bottom:10px;">비밀번호는 외우기엔 너무 많고,<br>메모장에 적기엔 불안하고,<br>노래방 레퍼토리는 항상 생각이 안 나고...</p>
-      <p style="margin-bottom:10px;">그런데 정작 앱을 찾아보면?<br><strong style="color:var(--text)">전부 유료. 광고. 또 유료. 또 광고.</strong> 😤</p>
       <p style="margin-bottom:10px;"><strong style="color:var(--text)">빡쳐서 제가 개발해서 만들었습니다.</strong></p>
       <p>광고 없고, 돈 안 받고, 그냥 씁니다. 🙂</p>
     </div>
-
-    <!-- made by -->
     <div style="padding-top:20px;border-top:1px solid var(--border);text-align:center;">
       <div style="font-size:13px;color:var(--text3);margin-bottom:4px;">만든 사람</div>
       <div style="font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.3px;">Junho.Kim</div>
@@ -527,7 +622,8 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
 <script>
 // ── STATE ──
 let masterKey='', pwEntries=[], songEntries=[], pwEditIdx=-1, songEditIdx=-1, showPw={};
-const PW_SK='kv_pw_v3', SONG_SK='kv_song_v1', MK='kv_master_v3';
+let currentSearchTab='ky';
+const PW_SK='kv_pw_v3', SONG_SK='kv_song_v2', MK='kv_master_v3';
 const $=id=>document.getElementById(id);
 
 // ── UTILS ──
@@ -589,7 +685,6 @@ function handleUnlock(){
     if(pw.length<4){$('lockErr').textContent='4자 이상 입력해주세요';return;}
     localStorage.setItem(MK,hash(pw));masterKey=pw;pwEntries=[];
     savePw();
-    // 설정 완료 메시지 표시
     $('lockSuccess').style.display='block';
     $('lockBtn').textContent='입장하기';
     setTimeout(()=>unlockPw(), 1200);
@@ -636,6 +731,197 @@ function updateStr(pw){
 function genPw(){const c='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';return Array.from({length:16},()=>c[Math.floor(Math.random()*c.length)]).join('');}
 $('genBtn').addEventListener('click',()=>{const p=genPw();$('fPw').value=p;updateStr(p);});
 $('fPw').addEventListener('input',e=>updateStr(e.target.value));
+
+// ── 금영/TJ 검색 팝업 ──
+function openSongSearch(tab){
+  currentSearchTab=tab;
+  switchSearchTab(tab);
+  $('searchModalInput').value='';
+  $('searchResults').innerHTML=`<div class="search-guide"><div class="search-guide-icon">🎤</div><div class="search-guide-text">제목이나 가수 이름으로 검색하세요</div><div class="search-guide-sub">결과에서 곡번호를 확인하고 선택하면<br>자동으로 입력됩니다</div></div>`;
+  $('songSearchModal').classList.add('open');
+  setTimeout(()=>$('searchModalInput').focus(),350);
+}
+
+function closeSongSearch(){
+  $('songSearchModal').classList.remove('open');
+}
+
+function switchSearchTab(tab){
+  currentSearchTab=tab;
+  $('searchTabKY').classList.toggle('active',tab==='ky');
+  $('searchTabTJ').classList.toggle('active',tab==='tj');
+  $('searchModalBtn').className='search-modal-btn'+(tab==='tj'?' tj':'');
+  $('searchModalTitle').textContent=tab==='ky'?'🎵 금영 검색':'🎵 TJ 검색';
+  $('searchModalInput').placeholder=tab==='ky'?'금영 - 제목 또는 가수 입력...':'TJ - 제목 또는 가수 입력...';
+  // 결과 초기화
+  $('searchResults').innerHTML=`<div class="search-guide"><div class="search-guide-icon">🎤</div><div class="search-guide-text">제목이나 가수 이름으로 검색하세요</div><div class="search-guide-sub">결과에서 곡번호를 확인하고 선택하면<br>자동으로 입력됩니다</div></div>`;
+}
+
+async function doSearch(){
+  const q=$('searchModalInput').value.trim();
+  if(!q){toast('검색어를 입력해주세요');return;}
+
+  const wrap=$('searchResults');
+  wrap.innerHTML=`<div class="search-loading">🔍 검색 중...</div>`;
+
+  try{
+    if(currentSearchTab==='ky'){
+      await searchKY(q);
+    } else {
+      await searchTJ(q);
+    }
+  } catch(e){
+    wrap.innerHTML=`<div class="search-empty"><div class="search-empty-icon">😅</div><div style="font-size:14px;color:var(--text3);">검색 중 오류가 발생했어요<br>직접 번호를 입력해주세요</div></div>`;
+  }
+}
+
+// 금영 검색 (kysing.kr 크롤링 - CORS 우회 프록시 활용)
+async function searchKY(q){
+  const wrap=$('searchResults');
+  // CORS 문제로 직접 크롤링 불가 → allorigins 프록시 활용
+  const url=`https://allorigins.win/get?disableCache=true&url=${encodeURIComponent('https://kysing.kr/search/?s_type=all&s_value='+encodeURIComponent(q))}`;
+  try{
+    const res=await fetch(url);
+    const data=await res.json();
+    const html=data.contents;
+    const parser=new DOMParser();
+    const doc=parser.parseFromString(html,'text/html');
+
+    // kysing.kr 검색결과 파싱
+    const items=doc.querySelectorAll('.song_list_wrap li, .search_list li, table.board_list tbody tr');
+    const results=[];
+
+    items.forEach(item=>{
+      // 다양한 셀렉터 시도
+      const numEl=item.querySelector('.song_no, .num, td:first-child');
+      const titleEl=item.querySelector('.song_name, .title, .name, td:nth-child(2)');
+      const artistEl=item.querySelector('.singer_name, .singer, .artist, td:nth-child(3)');
+      if(numEl&&titleEl){
+        results.push({
+          num:(numEl.textContent||'').trim(),
+          title:(titleEl.textContent||'').trim(),
+          artist:(artistEl?.textContent||'').trim()
+        });
+      }
+    });
+
+    if(results.length===0){
+      // 파싱 실패 시 직접 검색 링크 제공
+      wrap.innerHTML=`
+        <div class="search-empty">
+          <div class="search-empty-icon">🔍</div>
+          <div style="font-size:14px;color:var(--text2);margin-bottom:12px;">자동 검색이 어렵습니다<br>아래 링크에서 직접 확인해주세요</div>
+          <a href="https://kysing.kr/search/?s_type=all&s_value=${encodeURIComponent(q)}" target="_blank"
+            style="display:inline-block;padding:10px 20px;background:var(--song-light);color:var(--song);border-radius:var(--r-sm);font-weight:700;text-decoration:none;font-size:14px;border:1px solid rgba(232,93,4,.3);">
+            금영 사이트에서 검색 →
+          </a>
+        </div>`;
+      return;
+    }
+    renderSearchResults(results,'ky');
+  } catch(e){
+    // 프록시도 실패 시 링크 제공
+    wrap.innerHTML=`
+      <div class="search-empty">
+        <div class="search-empty-icon">🎵</div>
+        <div style="font-size:14px;color:var(--text2);margin-bottom:12px;">금영 직접 검색</div>
+        <a href="https://kysing.kr/search/?s_type=all&s_value=${encodeURIComponent(q)}" target="_blank"
+          style="display:inline-block;padding:10px 20px;background:var(--song-light);color:var(--song);border-radius:var(--r-sm);font-weight:700;text-decoration:none;font-size:14px;border:1px solid rgba(232,93,4,.3);">
+          금영 사이트에서 검색 →
+        </a>
+        <div style="font-size:12px;color:var(--text3);margin-top:10px;">번호 확인 후 직접 입력해주세요</div>
+      </div>`;
+  }
+}
+
+// TJ 검색
+async function searchTJ(q){
+  const wrap=$('searchResults');
+  const url=`https://allorigins.win/get?disableCache=true&url=${encodeURIComponent('https://www.tjmedia.com/tjsong/song_search.asp?strType=2&strText='+encodeURIComponent(q)+'&strSize05=50')}`;
+  try{
+    const res=await fetch(url);
+    const data=await res.json();
+    const html=data.contents;
+    const parser=new DOMParser();
+    const doc=parser.parseFromString(html,'text/html');
+
+    const rows=doc.querySelectorAll('table.board_type1 tbody tr, .song_list tbody tr');
+    const results=[];
+    rows.forEach(row=>{
+      const cells=row.querySelectorAll('td');
+      if(cells.length>=3){
+        const num=(cells[0].textContent||'').trim();
+        const title=(cells[1].textContent||'').trim();
+        const artist=(cells[2].textContent||'').trim();
+        if(num&&title&&/^\d+$/.test(num)){
+          results.push({num,title,artist});
+        }
+      }
+    });
+
+    if(results.length===0){
+      wrap.innerHTML=`
+        <div class="search-empty">
+          <div class="search-empty-icon">🔍</div>
+          <div style="font-size:14px;color:var(--text2);margin-bottom:12px;">자동 검색이 어렵습니다<br>아래 링크에서 직접 확인해주세요</div>
+          <a href="https://www.tjmedia.com/tjsong/song_search.asp?strType=2&strText=${encodeURIComponent(q)}" target="_blank"
+            style="display:inline-block;padding:10px 20px;background:var(--tj-light);color:var(--tj);border-radius:var(--r-sm);font-weight:700;text-decoration:none;font-size:14px;border:1px solid rgba(124,58,237,.3);">
+            TJ 사이트에서 검색 →
+          </a>
+        </div>`;
+      return;
+    }
+    renderSearchResults(results,'tj');
+  } catch(e){
+    wrap.innerHTML=`
+      <div class="search-empty">
+        <div class="search-empty-icon">🎵</div>
+        <div style="font-size:14px;color:var(--text2);margin-bottom:12px;">TJ 직접 검색</div>
+        <a href="https://www.tjmedia.com/tjsong/song_search.asp?strType=2&strText=${encodeURIComponent(q)}" target="_blank"
+          style="display:inline-block;padding:10px 20px;background:var(--tj-light);color:var(--tj);border-radius:var(--r-sm);font-weight:700;text-decoration:none;font-size:14px;border:1px solid rgba(124,58,237,.3);">
+          TJ 사이트에서 검색 →
+        </a>
+        <div style="font-size:12px;color:var(--text3);margin-top:10px;">번호 확인 후 직접 입력해주세요</div>
+      </div>`;
+  }
+}
+
+function renderSearchResults(results,tab){
+  const wrap=$('searchResults');
+  if(!results.length){
+    wrap.innerHTML=`<div class="search-empty"><div class="search-empty-icon">😅</div><div style="font-size:14px;color:var(--text3);">검색 결과가 없어요</div></div>`;
+    return;
+  }
+  wrap.innerHTML='';
+  results.forEach(r=>{
+    const div=document.createElement('div');
+    div.className='search-result-item';
+    div.innerHTML=`
+      <span class="search-result-num ${tab}">${esc(r.num)}</span>
+      <div class="search-result-info">
+        <div class="search-result-title">${esc(r.title)}</div>
+        <div class="search-result-artist">${esc(r.artist)}</div>
+      </div>
+      <button class="search-result-pick ${tab}">선택</button>`;
+    div.querySelector('.search-result-pick').addEventListener('click',()=>{
+      if(tab==='ky'){
+        $('sNumKY').value=r.num;
+        if(!$('sTitle').value) $('sTitle').value=r.title;
+        if(!$('sArtist').value) $('sArtist').value=r.artist;
+      } else {
+        $('sNumTJ').value=r.num;
+        if(!$('sTitle').value) $('sTitle').value=r.title;
+        if(!$('sArtist').value) $('sArtist').value=r.artist;
+      }
+      closeSongSearch();
+      toast(`${tab==='ky'?'금영':'TJ'} ${r.num}번 선택됨 ✓`);
+    });
+    wrap.appendChild(div);
+  });
+}
+
+// 검색 모달 닫기 (배경 클릭)
+$('songSearchModal').addEventListener('click',e=>{if(e.target===$('songSearchModal'))closeSongSearch();});
 
 // ── RENDER PW ──
 function renderPw(){
@@ -739,7 +1025,12 @@ $('pwMenuBtn').addEventListener('click',()=>openM('pwMenuModal'));
 // ── RENDER SONGS ──
 function renderSongs(){
   const q=$('songSearch').value.toLowerCase();
-  let list=songEntries.filter(e=>e.title.toLowerCase().includes(q)||(e.artist||'').toLowerCase().includes(q)||(e.num||'').includes(q));
+  let list=songEntries.filter(e=>
+    e.title.toLowerCase().includes(q)||
+    (e.artist||'').toLowerCase().includes(q)||
+    (e.numKY||'').includes(q)||
+    (e.numTJ||'').includes(q)
+  );
   const starred=list.filter(e=>e.starred),normal=list.filter(e=>!e.starred);
   const wrap=$('songList');wrap.innerHTML='';
   $('songCount').textContent=songEntries.length?`총 ${songEntries.length}곡 저장됨`:'';
@@ -760,7 +1051,11 @@ function makeSongItem(entry,idx){
       <div class="item-icon song">♪</div>
       <div class="item-info">
         <div class="item-name">${esc(entry.title)}</div>
-        <div class="item-sub">${esc(entry.artist||'가수 미입력')}${entry.num?` &nbsp;<span class="song-num">${esc(entry.num)}</span>`:''}</div>
+        <div class="item-sub">
+          ${esc(entry.artist||'가수 미입력')}
+          ${entry.numKY?`&nbsp;<span class="song-num-ky">금영 ${esc(entry.numKY)}</span>`:''}
+          ${entry.numTJ?`&nbsp;<span class="song-num-tj">TJ ${esc(entry.numTJ)}</span>`:''}
+        </div>
       </div>
       <div class="item-right">
         <button class="star-btn ${entry.starred?'on':''}">${entry.starred?'⭐':'☆'}</button>
@@ -768,12 +1063,14 @@ function makeSongItem(entry,idx){
       </div>
     </div>
     <div class="item-expand" id="sexp-${idx}">
-      ${entry.num?`<div class="exp-row"><div class="exp-label">번호</div><div class="exp-val normal"><span class="song-num">${esc(entry.num)}</span></div></div>`:''}
+      ${entry.numKY?`<div class="exp-row"><div class="exp-label">금영</div><div class="exp-val normal"><span class="song-num-ky">${esc(entry.numKY)}</span></div></div>`:''}
+      ${entry.numTJ?`<div class="exp-row"><div class="exp-label">TJ</div><div class="exp-val normal"><span class="song-num-tj">${esc(entry.numTJ)}</span></div></div>`:''}
       ${entry.artist?`<div class="exp-row"><div class="exp-label">가수</div><div class="exp-val normal">${esc(entry.artist)}</div></div>`:''}
       ${entry.memo?`<div class="exp-memo">📝 ${esc(entry.memo)}</div>`:''}
       <div class="copy-row">
-        <button class="cbtn" data-t="title">📋 제목 복사</button>
-        <button class="cbtn all" data-t="all">📤 한번에 복사</button>
+        <button class="cbtn" data-t="ky">🎵 금영번호</button>
+        <button class="cbtn" data-t="tj" style="border-color:var(--tj);color:var(--tj);background:var(--tj-light);">🎵 TJ번호</button>
+        <button class="cbtn all" data-t="all">📤 전체복사</button>
       </div>
       <div class="act-row">
         <button class="abtn mod song">✏️ 수정</button>
@@ -787,8 +1084,9 @@ function makeSongItem(entry,idx){
     btn.addEventListener('click',e=>{
       e.stopPropagation();
       const t=btn.dataset.t;
-      if(t==='title'){copyText(entry.title);toast('제목 복사됨!');}
-      else{copyText(`노래: ${entry.title}\n가수: ${entry.artist||'-'}${entry.num?'\n번호: '+entry.num:''}${entry.memo?'\n메모: '+entry.memo:''}`);toast('한번에 복사됨! 📤');}
+      if(t==='ky'){if(entry.numKY){copyText(entry.numKY);toast('금영 번호 복사됨!');}else toast('금영 번호가 없어요');}
+      else if(t==='tj'){if(entry.numTJ){copyText(entry.numTJ);toast('TJ 번호 복사됨!');}else toast('TJ 번호가 없어요');}
+      else{copyText(`노래: ${entry.title}\n가수: ${entry.artist||'-'}${entry.numKY?'\n금영: '+entry.numKY:''}${entry.numTJ?'\nTJ: '+entry.numTJ:''}${entry.memo?'\n메모: '+entry.memo:''}`);toast('전체 복사됨! 📤');}
     });
   });
   div.querySelector('.abtn.mod').addEventListener('click',e=>{e.stopPropagation();openSongEdit(idx);});
@@ -802,20 +1100,22 @@ function makeSongItem(entry,idx){
 // ── SONG ADD/EDIT ──
 $('songFab').addEventListener('click',()=>{
   songEditIdx=-1;$('songAddTitle').textContent='노래 추가';$('songSaveBtn').textContent='저장';
-  ['sTitle','sArtist','sNum','sMemo'].forEach(id=>$(id).value='');
+  ['sTitle','sArtist','sNumKY','sNumTJ','sMemo'].forEach(id=>$(id).value='');
   openM('songAddModal');setTimeout(()=>$('sTitle').focus(),350);
 });
 function openSongEdit(idx){
   songEditIdx=idx;const e=songEntries[idx];
   $('songAddTitle').textContent='수정';$('songSaveBtn').textContent='수정 저장';
-  $('sTitle').value=e.title||'';$('sArtist').value=e.artist||'';$('sNum').value=e.num||'';$('sMemo').value=e.memo||'';
+  $('sTitle').value=e.title||'';$('sArtist').value=e.artist||'';
+  $('sNumKY').value=e.numKY||'';$('sNumTJ').value=e.numTJ||'';$('sMemo').value=e.memo||'';
   openM('songAddModal');
 }
 $('songSaveBtn').addEventListener('click',()=>{
-  const title=$('sTitle').value.trim(),artist=$('sArtist').value.trim(),num=$('sNum').value.trim(),memo=$('sMemo').value.trim();
+  const title=$('sTitle').value.trim(),artist=$('sArtist').value.trim();
+  const numKY=$('sNumKY').value.trim(),numTJ=$('sNumTJ').value.trim(),memo=$('sMemo').value.trim();
   if(!title){toast('노래 제목을 입력해주세요');return;}
-  if(songEditIdx>=0){songEntries[songEditIdx]={...songEntries[songEditIdx],title,artist,num,memo};toast('수정됨 ✓');}
-  else{songEntries.unshift({title,artist,num,memo,starred:false,created:Date.now()});toast('저장됨 ✓');}
+  if(songEditIdx>=0){songEntries[songEditIdx]={...songEntries[songEditIdx],title,artist,numKY,numTJ,memo};toast('수정됨 ✓');}
+  else{songEntries.unshift({title,artist,numKY,numTJ,memo,starred:false,created:Date.now()});toast('저장됨 ✓');}
   saveSongs();renderSongs();closeM('songAddModal');
 });
 $('songSearch').addEventListener('input',()=>renderSongs());
@@ -865,8 +1165,8 @@ $('pwDeleteAllBtn').addEventListener('click',()=>{
 // ── SONG MENU ──
 $('songExportBtn').addEventListener('click',()=>{
   if(!songEntries.length){toast('저장된 노래가 없어요');return;}
-  const data=songEntries.map(e=>({'제목':e.title,'가수':e.artist||'','번호':e.num||'','메모':e.memo||'','18번':e.starred?'Y':''}));
-  const ws=XLSX.utils.json_to_sheet(data);ws['!cols']=[{wch:24},{wch:18},{wch:10},{wch:30},{wch:6}];
+  const data=songEntries.map(e=>({'제목':e.title,'가수':e.artist||'','금영번호':e.numKY||'','TJ번호':e.numTJ||'','메모':e.memo||'','18번':e.starred?'Y':''}));
+  const ws=XLSX.utils.json_to_sheet(data);ws['!cols']=[{wch:24},{wch:18},{wch:10},{wch:10},{wch:30},{wch:6}];
   const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,'노래목록',ws);
   XLSX.writeFile(wb,`노래목록_${new Date().toISOString().slice(0,10)}.xlsx`);
   closeM('songMenuModal');toast('노래 목록 내보내기 완료 🎤');
@@ -881,7 +1181,14 @@ $('songFileInput').addEventListener('change',e=>{
       const ws=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws);let added=0;
       rows.forEach(r=>{
         const title=(r['제목']||r['title']||'').toString().trim();
-        if(title){songEntries.push({title,artist:(r['가수']||r['artist']||'').toString().trim(),num:(r['번호']||r['num']||'').toString().trim(),memo:(r['메모']||'').toString().trim(),starred:false,created:Date.now()});added++;}
+        if(title){songEntries.push({
+          title,
+          artist:(r['가수']||r['artist']||'').toString().trim(),
+          numKY:(r['금영번호']||r['num']||'').toString().trim(),
+          numTJ:(r['TJ번호']||'').toString().trim(),
+          memo:(r['메모']||'').toString().trim(),
+          starred:false,created:Date.now()
+        });added++;}
       });
       saveSongs();renderSongs();closeM('songMenuModal');toast(`${added}곡 가져오기 완료 🎤`);
     }catch{toast('파일을 읽을 수 없어요');}
