@@ -773,38 +773,45 @@ async function doSearch(){
   }
 }
 
-// 금영 검색 (kysing.kr 크롤링 - CORS 우회 프록시 활용)
+// 금영 검색
 async function searchKY(q){
   const wrap=$('searchResults');
-  // CORS 문제로 직접 크롤링 불가 → allorigins 프록시 활용
-  const url=`https://allorigins.win/get?disableCache=true&url=${encodeURIComponent('https://kysing.kr/search/?s_type=all&s_value='+encodeURIComponent(q))}`;
+  const url=`https://corsproxy.io/?${encodeURIComponent('https://kysing.kr/search/?s_type=all&s_value='+encodeURIComponent(q))}`;
   try{
     const res=await fetch(url);
-    const data=await res.json();
-    const html=data.contents;
+    const html=await res.text();
     const parser=new DOMParser();
     const doc=parser.parseFromString(html,'text/html');
-
-    // kysing.kr 검색결과 파싱
-    const items=doc.querySelectorAll('.song_list_wrap li, .search_list li, table.board_list tbody tr');
     const results=[];
 
-    items.forEach(item=>{
-      // 다양한 셀렉터 시도
-      const numEl=item.querySelector('.song_no, .num, td:first-child');
-      const titleEl=item.querySelector('.song_name, .title, .name, td:nth-child(2)');
-      const artistEl=item.querySelector('.singer_name, .singer, .artist, td:nth-child(3)');
+    doc.querySelectorAll('.search_daily_chart_area .chart_song_info, .chart_list_wrap li').forEach(item=>{
+      const numEl=item.querySelector('.chart_num, .song_num, strong');
+      const titleEl=item.querySelector('.chart_song_name, .song_name, .tit');
+      const artistEl=item.querySelector('.chart_artist, .singer, .artist');
       if(numEl&&titleEl){
         results.push({
-          num:(numEl.textContent||'').trim(),
+          num:(numEl.textContent||'').trim().replace(/\D/g,''),
           title:(titleEl.textContent||'').trim(),
           artist:(artistEl?.textContent||'').trim()
         });
       }
     });
 
-    if(results.length===0){
-      // 파싱 실패 시 직접 검색 링크 제공
+    if(!results.length){
+      doc.querySelectorAll('table tbody tr').forEach(row=>{
+        const cells=row.querySelectorAll('td');
+        if(cells.length>=2){
+          const num=(cells[0].textContent||'').trim().replace(/\D/g,'');
+          const title=(cells[1].textContent||'').trim();
+          const artist=(cells[2]?.textContent||'').trim();
+          if(num&&title&&/^\d+$/.test(num)){
+            results.push({num,title,artist});
+          }
+        }
+      });
+    }
+
+    if(!results.length){
       wrap.innerHTML=`
         <div class="search-empty">
           <div class="search-empty-icon">🔍</div>
@@ -818,7 +825,6 @@ async function searchKY(q){
     }
     renderSearchResults(results,'ky');
   } catch(e){
-    // 프록시도 실패 시 링크 제공
     wrap.innerHTML=`
       <div class="search-empty">
         <div class="search-empty-icon">🎵</div>
@@ -835,17 +841,15 @@ async function searchKY(q){
 // TJ 검색
 async function searchTJ(q){
   const wrap=$('searchResults');
-  const url=`https://allorigins.win/get?disableCache=true&url=${encodeURIComponent('https://www.tjmedia.com/tjsong/song_search.asp?strType=2&strText='+encodeURIComponent(q)+'&strSize05=50')}`;
+  const url=`https://corsproxy.io/?${encodeURIComponent('https://www.tjmedia.com/tjsong/song_search.asp?strType=2&strText='+encodeURIComponent(q)+'&strSize05=50')}`;
   try{
     const res=await fetch(url);
-    const data=await res.json();
-    const html=data.contents;
+    const html=await res.text();
     const parser=new DOMParser();
     const doc=parser.parseFromString(html,'text/html');
-
-    const rows=doc.querySelectorAll('table.board_type1 tbody tr, .song_list tbody tr');
     const results=[];
-    rows.forEach(row=>{
+
+    doc.querySelectorAll('table.board_type1 tbody tr').forEach(row=>{
       const cells=row.querySelectorAll('td');
       if(cells.length>=3){
         const num=(cells[0].textContent||'').trim();
@@ -857,7 +861,7 @@ async function searchTJ(q){
       }
     });
 
-    if(results.length===0){
+    if(!results.length){
       wrap.innerHTML=`
         <div class="search-empty">
           <div class="search-empty-icon">🔍</div>
