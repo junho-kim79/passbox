@@ -29,6 +29,7 @@
   --accent:#2563eb;--accent-light:#eff6ff;--accent2:#1d4ed8;
   --song:#e85d04;--song-light:#fff4ee;--song2:#c04b02;
   --tj:#7c3aed;--tj-light:#f5f3ff;--tj2:#6d28d9;
+  --card:#0ea5e9;--card-light:#f0f9ff;--card2:#0284c7;
   --green:#16a34a;--red:#dc2626;--yellow:#d97706;
   --text:#1a1a1a;--text2:#555;--text3:#999;
   --mono:'DM Mono',monospace;--sans:'Noto Sans KR',sans-serif;
@@ -85,6 +86,8 @@ body{
 .door-btn.pw-door:active{background:#dbeafe;}
 .door-btn.song-door{border-color:var(--song);background:var(--song-light);}
 .door-btn.song-door:active{background:#fde8d8;}
+.door-btn.card-door{border-color:var(--card);background:var(--card-light);}
+.door-btn.card-door:active{background:#e0f2fe;}
 .door-icon{font-size:36px;line-height:1;}
 .door-name{font-size:18px;font-weight:700;color:var(--text);}
 .door-desc{font-size:13px;color:var(--text3);margin-top:4px;}
@@ -145,6 +148,7 @@ body{
 }
 .search-input:focus{border-color:var(--accent);}
 .search-input.song:focus{border-color:var(--song);}
+.search-input.card:focus{border-color:var(--card);}
 .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text3);}
 .fab{
   position:fixed;bottom:28px;right:calc(50% - var(--max-w)/2 + 20px);width:56px;height:56px;
@@ -155,6 +159,7 @@ body{
 @media(max-width:430px){.fab{right:20px;}}
 .fab.pw-fab{background:var(--accent);box-shadow:0 4px 16px rgba(37,99,235,.35);}
 .fab.song-fab{background:var(--song);box-shadow:0 4px 16px rgba(232,93,4,.35);}
+.fab.card-fab{background:var(--card);box-shadow:0 4px 16px rgba(14,165,233,.35);}
 .fab:active{transform:scale(.92);}
 .list-wrap{padding:8px 14px 100px;display:flex;flex-direction:column;}
 .list-section-label{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;padding:12px 2px 6px;}
@@ -165,6 +170,7 @@ body{
 .item-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;font-family:var(--mono);flex-shrink:0;}
 .item-icon.pw{background:var(--accent-light);color:var(--accent);}
 .item-icon.song{background:var(--song-light);color:var(--song);}
+.item-icon.card-icon{background:var(--card-light);color:var(--card);}
 .item-info{flex:1;min-width:0;}
 .item-name{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .item-sub{font-size:13px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -177,7 +183,7 @@ body{
 .item-expand{border-top:1px solid var(--border);padding:14px;display:none;flex-direction:column;gap:10px;background:var(--surface);}
 .item-expand.open{display:flex;}
 .exp-row{display:flex;align-items:center;gap:8px;}
-.exp-label{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;width:44px;flex-shrink:0;}
+.exp-label{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;width:52px;flex-shrink:0;}
 .exp-val{font-size:14px;font-family:var(--mono);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .exp-val.hide{letter-spacing:4px;color:var(--text3);}
 .exp-val.normal{font-family:var(--sans);}
@@ -187,17 +193,38 @@ body{
 .cbtn:active{background:var(--border);}
 .cbtn.all{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
 .cbtn.all:active{background:#dbeafe;}
+.cbtn.card-all{border-color:var(--card);color:var(--card);background:var(--card-light);}
 .exp-memo{font-size:13px;color:var(--text2);line-height:1.5;padding:8px 10px;background:var(--white);border-radius:var(--r-sm);border:1px solid var(--border);}
 .act-row{display:flex;gap:6px;}
 .abtn{flex:1;padding:8px;border:none;background:transparent;border-radius:var(--r-sm);font-size:12px;font-weight:600;font-family:var(--sans);cursor:pointer;color:var(--text3);transition:background .15s;}
 .abtn:hover{background:var(--border);}
 .abtn.mod{color:var(--accent);}
 .abtn.mod.song{color:var(--song);}
+.abtn.mod.card{color:var(--card);}
 .abtn.del{color:var(--red);}
 
 /* ── SONG NUM BADGES ── */
 .song-num-ky{display:inline-block;font-family:var(--mono);font-size:12px;font-weight:600;background:var(--song-light);color:var(--song);padding:2px 8px;border-radius:99px;border:1px solid rgba(232,93,4,.2);}
 .song-num-tj{display:inline-block;font-family:var(--mono);font-size:12px;font-weight:600;background:var(--tj-light);color:var(--tj);padding:2px 8px;border-radius:99px;border:1px solid rgba(124,58,237,.2);}
+
+/* ── 카드 비주얼 ── */
+.card-visual{
+  background:linear-gradient(135deg,var(--card),var(--card2));
+  border-radius:14px;padding:20px;margin-bottom:16px;
+  color:#fff;position:relative;overflow:hidden;
+}
+.card-visual::after{
+  content:'';position:absolute;top:-30px;right:-30px;
+  width:120px;height:120px;border-radius:50%;
+  background:rgba(255,255,255,0.08);
+}
+.card-visual-num{font-family:var(--mono);font-size:16px;letter-spacing:3px;margin-bottom:12px;}
+.card-visual-row{display:flex;justify-content:space-between;font-size:12px;opacity:0.85;}
+.card-type-badge{
+  display:inline-block;font-size:11px;font-weight:700;
+  background:var(--card-light);color:var(--card);
+  padding:2px 8px;border-radius:99px;border:1px solid rgba(14,165,233,.2);
+}
 
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:72px 32px;color:var(--text3);gap:10px;}
 .empty-icon{font-size:46px;opacity:.35;}
@@ -210,6 +237,7 @@ body{
 .fi{width:100%;padding:13px 14px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:15px;font-family:var(--sans);background:var(--surface);color:var(--text);outline:none;transition:border .2s;}
 .fi:focus{border-color:var(--accent);}
 .fi.song-fi:focus{border-color:var(--song);}
+.fi.card-fi:focus{border-color:var(--card);}
 .fi.mono{font-family:var(--mono);letter-spacing:1px;}
 .pw-row{display:flex;gap:8px;}
 .pw-row .fi{flex:1;}
@@ -225,7 +253,12 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
 .form-btn.pw-btn:active{background:var(--accent2);}
 .form-btn.song-btn{background:var(--song);}
 .form-btn.song-btn:active{background:var(--song2);}
+.form-btn.card-btn{background:var(--card);}
+.form-btn.card-btn:active{background:var(--card2);}
 .form-btn:active{transform:scale(.98);}
+.type-row{display:flex;gap:8px;margin-bottom:4px;}
+.type-btn{flex:1;padding:10px 6px;border:1.5px solid var(--border);background:var(--surface);border-radius:var(--r-sm);font-size:13px;font-weight:600;font-family:var(--sans);cursor:pointer;color:var(--text2);transition:all .15s;text-align:center;}
+.type-btn.active{background:var(--card-light);border-color:var(--card);color:var(--card);}
 
 /* ── MENU ── */
 .menu-list{display:flex;flex-direction:column;gap:6px;}
@@ -238,18 +271,13 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
 .mi-arrow{color:var(--text3);}
 .mi.danger .mi-title{color:var(--red);}
 
-/* ── 노래번호 안내 ── */
-.num-guide{
-  font-size:12px;color:var(--text3);padding:8px 12px;
-  background:var(--surface);border-radius:var(--r-sm);
-  border:1px solid var(--border);margin-bottom:4px;
-  line-height:1.6;
-}
+.num-guide{font-size:12px;color:var(--text3);padding:8px 12px;background:var(--surface);border-radius:var(--r-sm);border:1px solid var(--border);margin-bottom:4px;line-height:1.6;}
 .num-guide a{color:var(--song);font-weight:600;text-decoration:none;}
 .num-guide-tj a{color:var(--tj);}
 
 #fileInput{display:none;}
 #songFileInput{display:none;}
+#cardFileInput{display:none;}
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px;}
 </style>
@@ -263,7 +291,8 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
   <div style="text-align:center;margin-bottom:44px;">
     <div style="font-size:48px;margin-bottom:16px;">🔐</div>
     <div style="font-size:30px;font-weight:800;letter-spacing:-1px;color:var(--text);line-height:1.2;">당신의<br>비번창고</div>
-    <div style="font-size:13px;color:var(--text3);margin-top:10px;">어디로 들어갈까요?</div>
+    <div style="font-size:13px;color:var(--text3);margin-top:6px;">아직도 메모장에다가 저장하니?</div>
+<div style="font-size:12px;color:var(--text3);margin-top:4px;">어디로 들어갈까요?</div>
   </div>
   <div class="home-doors">
     <button class="door-btn pw-door" id="goPwBtn">
@@ -271,6 +300,13 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
       <div class="door-info">
         <div class="door-name">비번창고</div>
         <div class="door-desc">아이디 · 비밀번호 관리</div>
+      </div>
+    </button>
+    <button class="door-btn card-door" id="goCardBtn">
+      <div class="door-icon">💳</div>
+      <div class="door-info">
+        <div class="door-name">카드/계좌 창고</div>
+        <div class="door-desc">카드번호 · 계좌번호 관리</div>
       </div>
     </button>
     <button class="door-btn song-door" id="goSongBtn">
@@ -281,16 +317,15 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
       </div>
     </button>
   </div>
-  <div class="home-credit">made by <span>Junho.Kim</span></div>
-</div>
+  <div style="margin-top:20px;font-size:12px;color:var(--text3);">made by <span style="color:var(--text2);font-weight:700;">Junho.Kim</span></div>
 
 <!-- ── LOCK ── -->
 <div id="lockScreen" class="hidden">
   <button class="lock-back" id="lockBackBtn">← 돌아가기</button>
   <div style="width:100%;max-width:320px;">
     <div style="text-align:center;margin-bottom:32px;">
-      <div style="font-size:42px;margin-bottom:14px;">🔐</div>
-      <div style="font-size:26px;font-weight:800;letter-spacing:-.5px;color:var(--text);">비번창고</div>
+      <div style="font-size:42px;margin-bottom:14px;" id="lockIcon">🔐</div>
+      <div style="font-size:26px;font-weight:800;letter-spacing:-.5px;color:var(--text);" id="lockTitle">비번창고</div>
     </div>
     <div style="background:var(--white);border-radius:20px;padding:28px 24px;box-shadow:0 4px 24px rgba(0,0,0,0.10);border:1px solid var(--border);">
       <div style="font-size:14px;font-weight:600;color:var(--text2);margin-bottom:16px;text-align:center;" id="lockSub">마스터 비밀번호를 입력하세요</div>
@@ -305,12 +340,10 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
 
 <!-- ── PW APP ── -->
 <div id="pwApp" class="app-screen">
-  <div class="header pw-header">
+  <div class="header">
     <div class="header-top">
       <div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <button class="back-btn" id="pwBackBtn">← 홈</button>
-        </div>
+        <button class="back-btn" id="pwBackBtn">← 홈</button>
         <div class="header-title">🔐 비번창고</div>
         <div class="header-count" id="pwCount"></div>
       </div>
@@ -328,14 +361,35 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
   <button class="fab pw-fab" id="pwFab">+</button>
 </div>
 
-<!-- ── SONG APP ── -->
-<div id="songApp" class="app-screen">
-  <div class="header song-header">
+<!-- ── CARD APP ── -->
+<div id="cardApp" class="app-screen">
+  <div class="header">
     <div class="header-top">
       <div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <button class="back-btn" id="songBackBtn">← 홈</button>
-        </div>
+        <button class="back-btn" id="cardBackBtn">← 홈</button>
+        <div class="header-title">💳 카드/계좌 창고</div>
+        <div class="header-count" id="cardCount"></div>
+      </div>
+      <div class="header-right">
+        <button class="icon-btn" id="cardMenuBtn">☰</button>
+      </div>
+    </div>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="search" class="search-input card" id="cardSearch" placeholder="카드명, 은행명 검색...">
+    </div>
+  </div>
+  <div class="list-wrap" id="cardList"></div>
+  <div style="text-align:center;padding:0 0 110px;font-size:11px;color:var(--text3);">made by <span style="color:var(--text2);font-weight:600;">Junho.Kim</span></div>
+  <button class="fab card-fab" id="cardFab">+</button>
+</div>
+
+<!-- ── SONG APP ── -->
+<div id="songApp" class="app-screen">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <button class="back-btn" id="songBackBtn">← 홈</button>
         <div class="header-title">🎤 노래창고</div>
         <div class="header-count" id="songCount"></div>
       </div>
@@ -374,6 +428,32 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
   </div>
 </div>
 
+<!-- ── CARD ADD/EDIT MODAL ── -->
+<div class="modal-overlay" id="cardAddModal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="cardAddTitle">카드/계좌 추가</div>
+    <div class="fg">
+      <div class="fl">종류</div>
+      <div class="type-row">
+        <button class="type-btn active" id="typeCard" onclick="setCardType('card')">💳 카드</button>
+        <button class="type-btn" id="typeBank" onclick="setCardType('bank')">🏦 계좌</button>
+      </div>
+    </div>
+    <div class="fg"><div class="fl">이름 <span style="font-size:11px;color:var(--text3)">(예: 신한 체크, 국민 통장)</span></div><input type="text" class="fi card-fi" id="cName" placeholder="예) 신한 체크카드"></div>
+    <div class="fg"><div class="fl">은행 / 카드사</div><input type="text" class="fi card-fi" id="cBank" placeholder="예) 신한, 국민, 하나, 삼성"></div>
+    <div class="fg"><div class="fl">카드번호 / 계좌번호</div><input type="text" class="fi card-fi mono" id="cNum" placeholder="예) 1234-5678-9012-3456" inputmode="numeric"></div>
+    <div id="cardOnlyFields">
+      <div class="fg"><div class="fl">유효기간</div><input type="text" class="fi card-fi mono" id="cExp" placeholder="예) 12/27" maxlength="5" inputmode="numeric"></div>
+      <div class="fg"><div class="fl">CVC</div><input type="text" class="fi card-fi mono" id="cCvc" placeholder="예) 123" maxlength="3" inputmode="numeric"></div>
+      <div class="fg"><div class="fl">카드 비밀번호 앞 2자리</div><input type="text" class="fi card-fi mono" id="cPin" placeholder="예) 12" maxlength="2" inputmode="numeric"></div>
+    </div>
+    <div class="fg"><div class="fl">예금주</div><input type="text" class="fi card-fi" id="cHolder" placeholder="예) 김준호"></div>
+    <div class="fg"><div class="fl">메모 <span style="font-weight:400;color:var(--text3)">(선택)</span></div><textarea class="fi card-fi" id="cMemo" placeholder="예) 주거래 카드, 법인카드 등..."></textarea></div>
+    <button class="form-btn card-btn" id="cardSaveBtn">저장</button>
+  </div>
+</div>
+
 <!-- ── SONG ADD/EDIT MODAL ── -->
 <div class="modal-overlay" id="songAddModal">
   <div class="modal-box">
@@ -389,16 +469,12 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
     </div>
     <div class="fg">
       <div class="fl" style="color:var(--song);">금영 번호</div>
-      <div class="num-guide">
-        곡번호 확인 → <a href="https://kysing.kr" target="_blank">kysing.kr (금영)</a>
-      </div>
+      <div class="num-guide">곡번호 확인 → <a href="https://kysing.kr" target="_blank">kysing.kr (금영)</a></div>
       <input type="text" class="fi song-fi mono" id="sNumKY" placeholder="예) 12345" inputmode="numeric">
     </div>
     <div class="fg">
       <div class="fl" style="color:var(--tj);">TJ 번호</div>
-      <div class="num-guide num-guide-tj">
-        곡번호 확인 → <a href="https://www.tjmedia.com/tjsong/song_search.asp" target="_blank">tjmedia.com (TJ)</a>
-      </div>
+      <div class="num-guide num-guide-tj">곡번호 확인 → <a href="https://www.tjmedia.com/tjsong/song_search.asp" target="_blank">tjmedia.com (TJ)</a></div>
       <input type="text" class="fi mono" id="sNumTJ" placeholder="예) 67890" inputmode="numeric">
     </div>
     <div class="fg">
@@ -421,6 +497,19 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
       <div class="mi" id="lockMenuBtn"><div class="mi-icon">🔒</div><div class="mi-info"><div class="mi-title">잠금 후 홈으로</div><div class="mi-sub">앱을 잠그고 나갑니다</div></div><div class="mi-arrow">›</div></div>
       <div class="mi danger" id="pwDeleteAllBtn"><div class="mi-icon">🗑️</div><div class="mi-info"><div class="mi-title">전체 데이터 삭제</div><div class="mi-sub">복구 불가 — 신중히!</div></div><div class="mi-arrow">›</div></div>
       <div class="mi" id="aboutBtn"><div class="mi-icon">💬</div><div class="mi-info"><div class="mi-title">앱 소개</div><div class="mi-sub">만든 이야기</div></div><div class="mi-arrow">›</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CARD MENU MODAL ── -->
+<div class="modal-overlay" id="cardMenuModal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title">카드/계좌 창고 메뉴</div>
+    <div class="menu-list">
+      <div class="mi" id="cardExportBtn"><div class="mi-icon">📊</div><div class="mi-info"><div class="mi-title">엑셀로 내보내기</div><div class="mi-sub">백업용</div></div><div class="mi-arrow">›</div></div>
+      <div class="mi" id="cardImportBtn"><div class="mi-icon">📥</div><div class="mi-info"><div class="mi-title">엑셀에서 가져오기</div><div class="mi-sub">기존 파일 불러오기</div></div><div class="mi-arrow">›</div></div>
+      <div class="mi danger" id="cardDeleteAllBtn"><div class="mi-icon">🗑️</div><div class="mi-info"><div class="mi-title">전체 삭제</div><div class="mi-sub">복구 불가 — 신중히!</div></div><div class="mi-arrow">›</div></div>
     </div>
   </div>
 </div>
@@ -452,6 +541,7 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
 
 <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
 <input type="file" id="songFileInput" accept=".xlsx,.xls,.csv">
+<input type="file" id="cardFileInput" accept=".xlsx,.xls,.csv">
 
 <!-- ── ABOUT MODAL ── -->
 <div class="modal-overlay" id="aboutModal">
@@ -461,7 +551,7 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
     <div style="margin-bottom:10px;padding:20px;background:var(--accent-light);border-radius:var(--r);border:2px solid var(--accent);">
       <div style="font-size:22px;margin-bottom:8px;">🔒</div>
       <div style="font-size:15px;font-weight:700;color:var(--accent);margin-bottom:6px;">서버 저장 없음</div>
-      <div style="font-size:13px;color:var(--text2);line-height:1.7;">당신의 비번창고는 서버에 비밀번호를 저장하지 않습니다. 모든 데이터는 사용자의 기기에만 저장되며, 백업은 내보내기 기능으로 직접 관리합니다.</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7;">모든 데이터는 사용자의 기기에만 저장됩니다. 서버로 전송되지 않으며 백업은 내보내기 기능으로 직접 관리합니다.</div>
     </div>
     <div style="margin-bottom:20px;padding:20px;background:#fff7ed;border-radius:var(--r);border:2px solid var(--song);">
       <div style="font-size:22px;margin-bottom:8px;">⚠️</div>
@@ -477,8 +567,13 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
 
 <script>
 // ── STATE ──
-let masterKey='', pwEntries=[], songEntries=[], pwEditIdx=-1, songEditIdx=-1, showPw={};
-const PW_SK='kv_pw_v3', SONG_SK='kv_song_v2', MK='kv_master_v3';
+let masterKey='', pwEntries=[], cardEntries=[], songEntries=[];
+let pwEditIdx=-1, cardEditIdx=-1, songEditIdx=-1;
+let showPw={}, showCard={};
+let currentCardType='card';
+let lockTarget='pw'; // pw or card
+
+const PW_SK='kv_pw_v3', CARD_SK='kv_card_v1', SONG_SK='kv_song_v2', MK='kv_master_v3';
 const $=id=>document.getElementById(id);
 
 // ── UTILS ──
@@ -488,25 +583,31 @@ function dec(s,k){try{return JSON.parse(CryptoJS.AES.decrypt(s,k).toString(Crypt
 const hash=pw=>CryptoJS.SHA256(pw).toString();
 const openM=id=>$(id).classList.add('open');
 const closeM=id=>$(id).classList.remove('open');
-const closeAll=()=>['pwAddModal','pwMenuModal','songAddModal','songMenuModal','changePwModal'].forEach(closeM);
+const closeAll=()=>['pwAddModal','pwMenuModal','cardAddModal','cardMenuModal','songAddModal','songMenuModal','changePwModal'].forEach(closeM);
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const initial=n=>(n||'?').trim().charAt(0).toUpperCase();
 function copyText(txt){navigator.clipboard.writeText(txt).catch(()=>{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);});}
+function maskNum(n){if(!n)return '-';const s=n.replace(/\D/g,'');if(s.length>=16)return `**** **** **** ${s.slice(-4)}`;if(s.length>=10)return `****-****-${s.slice(-4)}`;return n;}
 
 // ── SCREENS ──
 function showScreen(id){
-  ['homeScreen','lockScreen'].forEach(s=>{
-    const el=$(s);
-    if(s===id){el.classList.remove('hidden');}else{el.classList.add('hidden');}
-  });
-  ['pwApp','songApp'].forEach(s=>{
-    const el=$(s);
-    if(s===id){el.classList.add('visible');}else{el.classList.remove('visible');}
-  });
+  ['homeScreen','lockScreen'].forEach(s=>{const el=$(s);if(s===id)el.classList.remove('hidden');else el.classList.add('hidden');});
+  ['pwApp','cardApp','songApp'].forEach(s=>{const el=$(s);if(s===id)el.classList.add('visible');else el.classList.remove('visible');});
 }
 
 // ── HOME ──
 $('goPwBtn').addEventListener('click',()=>{
+  lockTarget='pw';
+  $('lockIcon').textContent='🔐';
+  $('lockTitle').textContent='비번창고';
+  showScreen('lockScreen');
+  initLock();
+  setTimeout(()=>$('masterInput').focus(),350);
+});
+$('goCardBtn').addEventListener('click',()=>{
+  lockTarget='card';
+  $('lockIcon').textContent='💳';
+  $('lockTitle').textContent='카드/계좌 창고';
   showScreen('lockScreen');
   initLock();
   setTimeout(()=>$('masterInput').focus(),350);
@@ -538,11 +639,11 @@ function handleUnlock(){
   if(!pw){$('lockErr').textContent='비밀번호를 입력해주세요';return;}
   if(isFirst()){
     if(pw.length<4){$('lockErr').textContent='4자 이상 입력해주세요';return;}
-    localStorage.setItem(MK,hash(pw));masterKey=pw;pwEntries=[];
-    savePw();
+    localStorage.setItem(MK,hash(pw));masterKey=pw;pwEntries=[];cardEntries=[];
+    savePw();saveCards();
     $('lockSuccess').style.display='block';
     $('lockBtn').textContent='입장하기';
-    setTimeout(()=>unlockPw(), 1200);
+    setTimeout(()=>{ if(lockTarget==='card'){unlockCard();}else{unlockPw();} }, 1200);
   } else {
     if(hash(pw)!==localStorage.getItem(MK)){
       $('lockErr').textContent='비밀번호가 틀렸습니다';
@@ -551,24 +652,27 @@ function handleUnlock(){
       $('masterInput').value='';return;
     }
     masterKey=pw;
-    const r=localStorage.getItem(PW_SK);
-    if(r){const d=dec(r,masterKey);if(d===null){$('lockErr').textContent='복호화 실패';return;}pwEntries=d;}
-    else pwEntries=[];
-    unlockPw();
+    const rp=localStorage.getItem(PW_SK);
+    if(rp){const d=dec(rp,masterKey);if(d)pwEntries=d;}else pwEntries=[];
+    const rc=localStorage.getItem(CARD_SK);
+    if(rc){const d=dec(rc,masterKey);if(d)cardEntries=d;}else cardEntries=[];
+    if(lockTarget==='card'){unlockCard();}else{unlockPw();}
   }
 }
 function unlockPw(){showScreen('pwApp');renderPw();}
-function lockPw(){masterKey='';pwEntries=[];showScreen('homeScreen');closeAll();}
+function unlockCard(){showScreen('cardApp');renderCards();}
+function lockAll(){masterKey='';pwEntries=[];cardEntries=[];showScreen('homeScreen');closeAll();}
+
 $('lockBtn').addEventListener('click',handleUnlock);
 $('masterInput').addEventListener('keydown',e=>{if(e.key==='Enter')handleUnlock();});
 $('lockBackBtn').addEventListener('click',()=>showScreen('homeScreen'));
-$('pwBackBtn').addEventListener('click',()=>lockPw());
+$('pwBackBtn').addEventListener('click',()=>lockAll());
+$('cardBackBtn').addEventListener('click',()=>lockAll());
 $('songBackBtn').addEventListener('click',()=>showScreen('homeScreen'));
 
-// ── PW STORAGE ──
+// ── STORAGE ──
 function savePw(){localStorage.setItem(PW_SK,enc(pwEntries,masterKey));}
-
-// ── SONG STORAGE ──
+function saveCards(){localStorage.setItem(CARD_SK,enc(cardEntries,masterKey));}
 function loadSongs(){const r=localStorage.getItem(SONG_SK);songEntries=r?JSON.parse(r):[];}
 function saveSongs(){localStorage.setItem(SONG_SK,JSON.stringify(songEntries));}
 
@@ -587,6 +691,14 @@ function genPw(){const c='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01
 $('genBtn').addEventListener('click',()=>{const p=genPw();$('fPw').value=p;updateStr(p);});
 $('fPw').addEventListener('input',e=>updateStr(e.target.value));
 
+// ── CARD TYPE ──
+function setCardType(type){
+  currentCardType=type;
+  $('typeCard').classList.toggle('active',type==='card');
+  $('typeBank').classList.toggle('active',type==='bank');
+  $('cardOnlyFields').style.display=type==='card'?'block':'none';
+}
+
 // ── RENDER PW ──
 function renderPw(){
   const q=$('pwSearch').value.toLowerCase();
@@ -595,11 +707,7 @@ function renderPw(){
   const wrap=$('pwList');wrap.innerHTML='';
   $('pwCount').textContent=pwEntries.length?`총 ${pwEntries.length}개 저장됨`:'';
   if(!list.length){wrap.innerHTML=`<div class="empty"><div class="empty-icon">🔑</div><div class="empty-text">${q?'검색 결과 없음':'저장된 항목이 없어요'}</div><div class="empty-sub">${q?'다른 검색어를 시도해보세요':'아래 + 버튼을 눌러 추가하세요'}</div></div>`;return;}
-  function sec(arr,label){
-    if(!arr.length)return;
-    if(label){const d=document.createElement('div');d.className='list-section-label';d.textContent=label;wrap.appendChild(d);}
-    arr.forEach(e=>wrap.appendChild(makePwItem(e,pwEntries.indexOf(e))));
-  }
+  function sec(arr,label){if(!arr.length)return;if(label){const d=document.createElement('div');d.className='list-section-label';d.textContent=label;wrap.appendChild(d);}arr.forEach(e=>wrap.appendChild(makePwItem(e,pwEntries.indexOf(e))));}
   if(starred.length)sec(starred,'⭐ 즐겨찾기');
   sec(normal,starred.length?'전체':'');
 }
@@ -664,6 +772,103 @@ function makePwItem(entry,idx){
   return div;
 }
 
+// ── RENDER CARDS ──
+function renderCards(){
+  const q=$('cardSearch').value.toLowerCase();
+  let list=cardEntries.filter(e=>e.name.toLowerCase().includes(q)||(e.bank||'').toLowerCase().includes(q)||(e.holder||'').toLowerCase().includes(q));
+  const starred=list.filter(e=>e.starred),normal=list.filter(e=>!e.starred);
+  const wrap=$('cardList');wrap.innerHTML='';
+  $('cardCount').textContent=cardEntries.length?`총 ${cardEntries.length}개 저장됨`:'';
+  if(!list.length){wrap.innerHTML=`<div class="empty"><div class="empty-icon">💳</div><div class="empty-text">${q?'검색 결과 없음':'저장된 카드/계좌가 없어요'}</div><div class="empty-sub">${q?'다른 검색어를 시도해보세요':'아래 + 버튼을 눌러 추가하세요'}</div></div>`;return;}
+  function sec(arr,label){if(!arr.length)return;if(label){const d=document.createElement('div');d.className='list-section-label';d.textContent=label;wrap.appendChild(d);}arr.forEach(e=>wrap.appendChild(makeCardItem(e,cardEntries.indexOf(e))));}
+  if(starred.length)sec(starred,'⭐ 주거래');
+  sec(normal,starred.length?'전체':'');
+}
+
+function makeCardItem(entry,idx){
+  const div=document.createElement('div');div.className='list-item';
+  const hidden=!showCard[idx];
+  const isCard=entry.cardType==='card';
+  div.innerHTML=`
+    <div class="list-item-main">
+      <div class="item-icon card-icon">${isCard?'💳':'🏦'}</div>
+      <div class="item-info">
+        <div class="item-name">${esc(entry.name)}</div>
+        <div class="item-sub mono">${maskNum(entry.num)} ${entry.bank?'· '+esc(entry.bank):''}</div>
+      </div>
+      <div class="item-right">
+        <button class="star-btn ${entry.starred?'on':''}">${entry.starred?'⭐':'☆'}</button>
+        <button class="chevron">⌄</button>
+      </div>
+    </div>
+    <div class="item-expand" id="cexp-${idx}">
+      <div class="card-visual">
+        <div class="card-visual-num">${esc(entry.num||'---- ---- ---- ----')}</div>
+        <div class="card-visual-row">
+          <span>${esc(entry.holder||'')}</span>
+          ${isCard&&entry.exp?`<span>${esc(entry.exp)}</span>`:''}
+        </div>
+      </div>
+      <div class="exp-row"><div class="exp-label">종류</div><div class="exp-val normal"><span class="card-type-badge">${isCard?'💳 카드':'🏦 계좌'}</span></div></div>
+      <div class="exp-row"><div class="exp-label">은행</div><div class="exp-val normal">${esc(entry.bank||'-')}</div></div>
+      <div class="exp-row">
+        <div class="exp-label">번호</div>
+        <div class="exp-val ${hidden?'hide':''}" id="cv-${idx}">${hidden?maskNum(entry.num):esc(entry.num||'-')}</div>
+        <button class="pw-eye" id="ce-${idx}">${hidden?'👁️':'🙈'}</button>
+      </div>
+      ${isCard&&entry.exp?`<div class="exp-row"><div class="exp-label">유효기간</div><div class="exp-val">${esc(entry.exp)}</div></div>`:''}
+      ${isCard&&entry.cvc?`<div class="exp-row"><div class="exp-label">CVC</div><div class="exp-val ${hidden?'hide':''}" id="cvc-${idx}">${hidden?'•••':esc(entry.cvc)}</div></div>`:''}
+      ${isCard&&entry.pin?`<div class="exp-row"><div class="exp-label">PIN앞2</div><div class="exp-val ${hidden?'hide':''}" id="cpin-${idx}">${hidden?'••':esc(entry.pin)}</div></div>`:''}
+      ${entry.holder?`<div class="exp-row"><div class="exp-label">예금주</div><div class="exp-val normal">${esc(entry.holder)}</div></div>`:''}
+      ${entry.memo?`<div class="exp-memo">📝 ${esc(entry.memo)}</div>`:''}
+      <div class="copy-row">
+        <button class="cbtn" data-t="num">📋 번호복사</button>
+        <button class="cbtn card-all" data-t="all">📤 전체복사</button>
+      </div>
+      <div class="act-row">
+        <button class="abtn mod card">✏️ 수정</button>
+        <button class="abtn del">🗑️ 삭제</button>
+      </div>
+    </div>`;
+  div.querySelector('.star-btn').addEventListener('click',e=>{e.stopPropagation();cardEntries[idx].starred=!cardEntries[idx].starred;saveCards();renderCards();});
+  const ch=div.querySelector('.chevron');
+  ch.addEventListener('click',e=>{e.stopPropagation();div.querySelector('.item-expand').classList.toggle('open');ch.classList.toggle('open');});
+  div.querySelector(`#ce-${idx}`).addEventListener('click',e=>{
+    e.stopPropagation();showCard[idx]=!showCard[idx];
+    const v=div.querySelector(`#cv-${idx}`);
+    if(showCard[idx]){
+      v.textContent=entry.num||'-';v.classList.remove('hide');
+      const cvcEl=div.querySelector(`#cvc-${idx}`);if(cvcEl){cvcEl.textContent=entry.cvc||'-';cvcEl.classList.remove('hide');}
+      const pinEl=div.querySelector(`#cpin-${idx}`);if(pinEl){pinEl.textContent=entry.pin||'-';pinEl.classList.remove('hide');}
+    } else {
+      v.textContent=maskNum(entry.num);v.classList.add('hide');
+      const cvcEl=div.querySelector(`#cvc-${idx}`);if(cvcEl){cvcEl.textContent='•••';cvcEl.classList.add('hide');}
+      const pinEl=div.querySelector(`#cpin-${idx}`);if(pinEl){pinEl.textContent='••';pinEl.classList.add('hide');}
+    }
+    e.currentTarget.textContent=showCard[idx]?'🙈':'👁️';
+  });
+  div.querySelectorAll('.cbtn').forEach(btn=>{
+    btn.addEventListener('click',e=>{
+      e.stopPropagation();
+      const t=btn.dataset.t;
+      if(t==='num'){copyText(entry.num||'');toast('번호 복사됨!');}
+      else{
+        let txt=`${entry.name}\n${entry.bank||''}\n번호: ${entry.num||'-'}`;
+        if(isCard){if(entry.exp)txt+=`\n유효기간: ${entry.exp}`;if(entry.cvc)txt+=`\nCVC: ${entry.cvc}`;if(entry.pin)txt+=`\nPIN앞2: ${entry.pin}`;}
+        if(entry.holder)txt+=`\n예금주: ${entry.holder}`;
+        if(entry.memo)txt+=`\n메모: ${entry.memo}`;
+        copyText(txt);toast('전체 복사됨! 📤');
+      }
+    });
+  });
+  div.querySelector('.abtn.mod').addEventListener('click',e=>{e.stopPropagation();openCardEdit(idx);});
+  div.querySelector('.abtn.del').addEventListener('click',e=>{
+    e.stopPropagation();
+    if(confirm(`"${entry.name}" 삭제할까요?`)){cardEntries.splice(idx,1);delete showCard[idx];saveCards();renderCards();toast('삭제됨');}
+  });
+  return div;
+}
+
 // ── PW ADD/EDIT ──
 $('pwFab').addEventListener('click',()=>{
   pwEditIdx=-1;$('pwAddTitle').textContent='새 항목 추가';$('pwSaveBtn').textContent='저장';
@@ -686,24 +891,49 @@ $('pwSaveBtn').addEventListener('click',()=>{
 $('pwSearch').addEventListener('input',()=>renderPw());
 $('pwMenuBtn').addEventListener('click',()=>openM('pwMenuModal'));
 
+// ── CARD ADD/EDIT ──
+$('cardFab').addEventListener('click',()=>{
+  cardEditIdx=-1;$('cardAddTitle').textContent='카드/계좌 추가';$('cardSaveBtn').textContent='저장';
+  ['cName','cBank','cNum','cExp','cCvc','cPin','cHolder','cMemo'].forEach(id=>$(id).value='');
+  setCardType('card');
+  openM('cardAddModal');setTimeout(()=>$('cName').focus(),350);
+});
+function openCardEdit(idx){
+  cardEditIdx=idx;const e=cardEntries[idx];
+  $('cardAddTitle').textContent='수정';$('cardSaveBtn').textContent='수정 저장';
+  setCardType(e.cardType||'card');
+  $('cName').value=e.name||'';$('cBank').value=e.bank||'';$('cNum').value=e.num||'';
+  $('cExp').value=e.exp||'';$('cCvc').value=e.cvc||'';$('cPin').value=e.pin||'';
+  $('cHolder').value=e.holder||'';$('cMemo').value=e.memo||'';
+  openM('cardAddModal');
+}
+$('cardSaveBtn').addEventListener('click',()=>{
+  const name=$('cName').value.trim();
+  if(!name){toast('이름을 입력해주세요');return;}
+  const entry={
+    name, bank:$('cBank').value.trim(), num:$('cNum').value.trim(),
+    exp:currentCardType==='card'?$('cExp').value.trim():'',
+    cvc:currentCardType==='card'?$('cCvc').value.trim():'',
+    pin:currentCardType==='card'?$('cPin').value.trim():'',
+    holder:$('cHolder').value.trim(), memo:$('cMemo').value.trim(),
+    cardType:currentCardType, starred:false, created:Date.now()
+  };
+  if(cardEditIdx>=0){cardEntries[cardEditIdx]={...cardEntries[cardEditIdx],...entry};toast('수정됨 ✓');}
+  else{cardEntries.unshift(entry);toast('저장됨 ✓');}
+  saveCards();renderCards();closeM('cardAddModal');
+});
+$('cardSearch').addEventListener('input',()=>renderCards());
+$('cardMenuBtn').addEventListener('click',()=>openM('cardMenuModal'));
+
 // ── RENDER SONGS ──
 function renderSongs(){
   const q=$('songSearch').value.toLowerCase();
-  let list=songEntries.filter(e=>
-    e.title.toLowerCase().includes(q)||
-    (e.artist||'').toLowerCase().includes(q)||
-    (e.numKY||'').includes(q)||
-    (e.numTJ||'').includes(q)
-  );
+  let list=songEntries.filter(e=>e.title.toLowerCase().includes(q)||(e.artist||'').toLowerCase().includes(q)||(e.numKY||'').includes(q)||(e.numTJ||'').includes(q));
   const starred=list.filter(e=>e.starred),normal=list.filter(e=>!e.starred);
   const wrap=$('songList');wrap.innerHTML='';
   $('songCount').textContent=songEntries.length?`총 ${songEntries.length}곡 저장됨`:'';
   if(!list.length){wrap.innerHTML=`<div class="empty"><div class="empty-icon">🎤</div><div class="empty-text">${q?'검색 결과 없음':'저장된 노래가 없어요'}</div><div class="empty-sub">${q?'다른 검색어를 시도해보세요':'아래 + 버튼을 눌러 내 18번을 추가해보세요'}</div></div>`;return;}
-  function sec(arr,label){
-    if(!arr.length)return;
-    if(label){const d=document.createElement('div');d.className='list-section-label';d.textContent=label;wrap.appendChild(d);}
-    arr.forEach(e=>wrap.appendChild(makeSongItem(e,songEntries.indexOf(e))));
-  }
+  function sec(arr,label){if(!arr.length)return;if(label){const d=document.createElement('div');d.className='list-section-label';d.textContent=label;wrap.appendChild(d);}arr.forEach(e=>wrap.appendChild(makeSongItem(e,songEntries.indexOf(e))));}
   if(starred.length)sec(starred,'⭐ 18번');
   sec(normal,starred.length?'전체':'');
 }
@@ -802,10 +1032,7 @@ $('fileInput').addEventListener('change',e=>{
     try{
       const wb=XLSX.read(ev.target.result,{type:'array'});
       const ws=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws);let added=0;
-      rows.forEach(r=>{
-        const name=(r['사이트/앱']||r['사이트']||r['name']||'').toString().trim();
-        if(name){pwEntries.push({name,id:(r['아이디']||r['id']||'').toString().trim(),pw:(r['비밀번호']||r['password']||'').toString().trim(),memo:(r['메모']||'').toString().trim(),starred:false,created:Date.now()});added++;}
-      });
+      rows.forEach(r=>{const name=(r['사이트/앱']||r['사이트']||r['name']||'').toString().trim();if(name){pwEntries.push({name,id:(r['아이디']||r['id']||'').toString().trim(),pw:(r['비밀번호']||r['password']||'').toString().trim(),memo:(r['메모']||'').toString().trim(),starred:false,created:Date.now()});added++;}});
       savePw();renderPw();closeM('pwMenuModal');toast(`${added}개 가져오기 완료 📥`);
     }catch{toast('파일을 읽을 수 없어요');}
     e.target.value='';
@@ -818,12 +1045,40 @@ $('cpSave').addEventListener('click',()=>{
   if(hash(cur)!==localStorage.getItem(MK)){toast('현재 비밀번호가 틀렸어요');return;}
   if(nw.length<4){toast('4자 이상 입력해주세요');return;}
   if(nw!==cf){toast('새 비밀번호가 일치하지 않아요');return;}
-  localStorage.setItem(MK,hash(nw));masterKey=nw;savePw();closeM('changePwModal');toast('비밀번호 변경됨 🔑');
+  localStorage.setItem(MK,hash(nw));masterKey=nw;savePw();saveCards();closeM('changePwModal');toast('비밀번호 변경됨 🔑');
 });
-$('lockMenuBtn').addEventListener('click',()=>lockPw());
+$('lockMenuBtn').addEventListener('click',()=>lockAll());
 $('aboutBtn').addEventListener('click',()=>{closeM('pwMenuModal');openM('aboutModal');});
 $('pwDeleteAllBtn').addEventListener('click',()=>{
   if(confirm('비번 전체 삭제할까요? 복구 불가!')){if(confirm('정말요?')){pwEntries=[];localStorage.removeItem(PW_SK);renderPw();closeM('pwMenuModal');toast('전체 삭제됨');}}
+});
+
+// ── CARD MENU ──
+$('cardExportBtn').addEventListener('click',()=>{
+  if(!cardEntries.length){toast('저장된 항목이 없어요');return;}
+  const data=cardEntries.map(e=>({'이름':e.name,'종류':e.cardType==='card'?'카드':'계좌','은행/카드사':e.bank||'','번호':e.num||'','유효기간':e.exp||'','CVC':e.cvc||'','PIN앞2':e.pin||'','예금주':e.holder||'','메모':e.memo||''}));
+  const ws=XLSX.utils.json_to_sheet(data);
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,'카드계좌',ws);
+  XLSX.writeFile(wb,`카드계좌_백업_${new Date().toISOString().slice(0,10)}.xlsx`);
+  closeM('cardMenuModal');toast('엑셀 내보내기 완료 📊');
+});
+$('cardImportBtn').addEventListener('click',()=>$('cardFileInput').click());
+$('cardFileInput').addEventListener('change',e=>{
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const wb=XLSX.read(ev.target.result,{type:'array'});
+      const ws=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws);let added=0;
+      rows.forEach(r=>{const name=(r['이름']||'').toString().trim();if(name){cardEntries.push({name,cardType:(r['종류']||'').includes('계좌')?'bank':'card',bank:(r['은행/카드사']||'').toString().trim(),num:(r['번호']||'').toString().trim(),exp:(r['유효기간']||'').toString().trim(),cvc:(r['CVC']||'').toString().trim(),pin:(r['PIN앞2']||'').toString().trim(),holder:(r['예금주']||'').toString().trim(),memo:(r['메모']||'').toString().trim(),starred:false,created:Date.now()});added++;}});
+      saveCards();renderCards();closeM('cardMenuModal');toast(`${added}개 가져오기 완료 📥`);
+    }catch{toast('파일을 읽을 수 없어요');}
+    e.target.value='';
+  };
+  reader.readAsArrayBuffer(file);
+});
+$('cardDeleteAllBtn').addEventListener('click',()=>{
+  if(confirm('카드/계좌 전체 삭제할까요?')){if(confirm('정말요?')){cardEntries=[];localStorage.removeItem(CARD_SK);renderCards();closeM('cardMenuModal');toast('전체 삭제됨');}}
 });
 
 // ── SONG MENU ──
@@ -843,17 +1098,7 @@ $('songFileInput').addEventListener('change',e=>{
     try{
       const wb=XLSX.read(ev.target.result,{type:'array'});
       const ws=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws);let added=0;
-      rows.forEach(r=>{
-        const title=(r['제목']||r['title']||'').toString().trim();
-        if(title){songEntries.push({
-          title,
-          artist:(r['가수']||r['artist']||'').toString().trim(),
-          numKY:(r['금영번호']||r['num']||'').toString().trim(),
-          numTJ:(r['TJ번호']||'').toString().trim(),
-          memo:(r['메모']||'').toString().trim(),
-          starred:false,created:Date.now()
-        });added++;}
-      });
+      rows.forEach(r=>{const title=(r['제목']||r['title']||'').toString().trim();if(title){songEntries.push({title,artist:(r['가수']||r['artist']||'').toString().trim(),numKY:(r['금영번호']||r['num']||'').toString().trim(),numTJ:(r['TJ번호']||'').toString().trim(),memo:(r['메모']||'').toString().trim(),starred:false,created:Date.now()});added++;}});
       saveSongs();renderSongs();closeM('songMenuModal');toast(`${added}곡 가져오기 완료 🎤`);
     }catch{toast('파일을 읽을 수 없어요');}
     e.target.value='';
