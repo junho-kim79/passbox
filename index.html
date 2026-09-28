@@ -248,6 +248,32 @@ body{
 }
 
 /* ── 여행 사진 ── */
+.ocr-btn{width:100%;padding:13px;margin-bottom:6px;border:1.5px dashed var(--trip);border-radius:var(--r-sm);background:var(--trip-light);color:var(--trip2);font-size:14px;font-weight:700;font-family:var(--sans);cursor:pointer;}
+.ocr-btn:disabled{opacity:.6;}
+.ocr-status{font-size:12px;color:var(--text2);min-height:16px;margin-bottom:10px;line-height:1.5;}
+.fg.two{flex-direction:row;gap:10px;}.fg.two>div{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0;}
+.fl-sub{font-size:11px;font-weight:400;color:var(--text3);margin-left:4px;}
+.num-row{display:flex;gap:6px;margin-bottom:6px;}
+.num-row .num-l{flex:0 0 42%;font-size:13px;padding:11px 10px;}
+.num-row .num-v{flex:1;min-width:0;padding:11px 10px;}
+.num-del{flex:none;width:34px;border:0;background:transparent;color:var(--text3);font-size:15px;cursor:pointer;}
+.num-add{align-self:flex-start;border:0;background:none;color:var(--trip);font-weight:700;font-size:13px;padding:4px 0;cursor:pointer;font-family:var(--sans);}
+.photo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.photo-grid .ph{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--border);}
+.photo-grid img{width:100%;height:100%;object-fit:cover;display:block;cursor:pointer;border-radius:10px;aspect-ratio:1;}
+.photo-grid .ph button{position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:11px;cursor:pointer;}
+.ph-add{aspect-ratio:1;border:1.5px dashed var(--border2);border-radius:10px;background:var(--surface);color:var(--text3);font-size:20px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--sans);}
+.ph-add small{font-size:11px;}
+.photo-grid.view{margin:4px 0;}
+.dday{font-size:11px;font-weight:800;color:#fff;background:var(--trip);border-radius:999px;padding:3px 8px;white-space:nowrap;}
+.dday.now{background:#cba258;color:#1e3932;}.dday.past{background:var(--border);color:var(--text3);}
+.trip-nums{display:flex;flex-direction:column;gap:6px;}
+.trip-num{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 8px 8px 12px;}
+.trip-num>div{flex:1;min-width:0;}
+.trip-num small{display:block;font-size:11px;color:var(--text3);font-weight:600;}
+.trip-num b{display:block;font-family:var(--mono);font-size:15px;letter-spacing:.5px;overflow:hidden;text-overflow:ellipsis;}
+.trip-num .cbtn{flex:none;min-width:56px;}
+.trip-hint{font-size:12px;line-height:1.6;color:var(--text2);background:#f8f2e6;border-radius:var(--r-sm);padding:8px 10px;}
 .photo-drop{
   display:flex;align-items:center;justify-content:center;gap:8px;
   border:1.5px dashed var(--border2);border-radius:var(--r-sm);background:var(--surface);
@@ -472,7 +498,7 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
     </div>
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
-      <input type="search" class="search-input trip" id="tripSearch" placeholder="예약처, 예약번호 검색...">
+      <input type="search" class="search-input trip" id="tripSearch" placeholder="예약한 곳, 항공사·호텔, 번호 검색...">
     </div>
   </div>
   <div class="list-wrap" id="tripList"></div>
@@ -563,28 +589,39 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
   <div class="modal-box">
     <div class="modal-handle"></div>
     <div class="modal-title" id="tripAddTitle">예약 추가</div>
+    <button type="button" class="ocr-btn" id="tOcrBtn">📷 예약 화면 사진으로 자동 입력</button>
+    <div class="ocr-status" id="tOcrStatus"></div>
     <div class="fg">
       <div class="fl">종류</div>
       <div class="type-row">
-        <button class="type-btn trip-type active" id="typeFlight" onclick="setTripType('flight')">✈️ 항공권</button>
+        <button class="type-btn trip-type active" id="typeFlight" onclick="setTripType('flight')">✈️ 항공</button>
         <button class="type-btn trip-type" id="typeStay" onclick="setTripType('stay')">🏨 숙소</button>
         <button class="type-btn trip-type" id="typeCar" onclick="setTripType('car')">🚗 렌터카</button>
         <button class="type-btn trip-type" id="typeIns" onclick="setTripType('ins')">🛡️ 보험</button>
         <button class="type-btn trip-type" id="typeEtc" onclick="setTripType('etc')">📎 기타</button>
       </div>
     </div>
-    <div class="fg"><div class="fl">예약처 <span style="font-size:11px;color:var(--text3)">(예: 대한항공, 아고다)</span></div><input type="text" class="fi" id="tName" placeholder="예) 대한항공, 아고다, 야놀자"></div>
-    <div class="fg"><div class="fl">예약번호</div><input type="text" class="fi mono" id="tNum" placeholder="예) ABCD12"></div>
-    <div class="fg">
-      <div class="fl">사진 <span style="font-weight:400;color:var(--text3)">(선택 · 캡처/티켓 사진)</span></div>
-      <div class="photo-drop-wrap">
-        <div class="photo-drop" id="tPhotoDrop">📷 탭해서 사진 추가</div>
-      </div>
+    <div class="fg two">
+      <div><div class="fl" id="tFromL">가는 날</div><input type="date" class="fi" id="tFrom"></div>
+      <div><div class="fl" id="tToL">오는 날</div><input type="date" class="fi" id="tTo"></div>
     </div>
-    <div class="fg"><div class="fl">메모 <span style="font-weight:400;color:var(--text3)">(선택)</span></div><textarea class="fi" id="tMemo" placeholder="예) 창가석, 조식 포함 등..."></textarea></div>
+    <div class="fg"><div class="fl">예약한 곳 <span class="fl-sub">여행사·앱</span></div><input type="text" class="fi" id="tAgency" list="tAgencyList" placeholder="예) 인터파크, 트립닷컴, 아고다"></div>
+    <div class="fg"><div class="fl" id="tVendorL">항공사</div><input type="text" class="fi" id="tVendor" list="tVendorList" placeholder="예) 대한항공"></div>
+    <div class="fg">
+      <div class="fl">번호 <span class="fl-sub">번호마다 따로 복사할 수 있어요</span></div>
+      <div id="tNums"></div>
+      <button type="button" class="num-add" id="tNumAdd">＋ 번호 추가</button>
+    </div>
+    <div class="fg">
+      <div class="fl">사진 <span class="fl-sub">항공권·바우처 캡처 (여러 장)</span></div>
+      <div class="photo-grid" id="tPhotos"></div>
+    </div>
+    <div class="fg"><div class="fl">메모 <span class="fl-sub">선택</span></div><textarea class="fi" id="tMemo" placeholder="예) 창가석, 조식 포함, 수하물 15kg"></textarea></div>
     <button class="form-btn trip-btn" id="tripSaveBtn">저장</button>
   </div>
 </div>
+<datalist id="tAgencyList"><option value="인터파크"><option value="하나투어"><option value="모두투어"><option value="노랑풍선"><option value="트립닷컴"><option value="아고다"><option value="익스피디아"><option value="부킹닷컴"><option value="호텔스닷컴"><option value="야놀자"><option value="여기어때"><option value="에어비앤비"><option value="마이리얼트립"><option value="클룩"><option value="네이버"><option value="스카이스캐너"><option value="항공사 직접"><option value="호텔 직접"></datalist>
+<datalist id="tVendorList"><option value="대한항공"><option value="아시아나"><option value="제주항공"><option value="진에어"><option value="티웨이"><option value="에어부산"><option value="에어서울"><option value="이스타"><option value="에어프레미아"><option value="피치"><option value="일본항공"><option value="전일본공수"></datalist>
 
 <!-- ── PW MENU MODAL ── -->
 <div class="modal-overlay" id="pwMenuModal">
@@ -634,6 +671,7 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
     <div class="modal-handle"></div>
     <div class="modal-title">여행 보관함 메뉴</div>
     <div class="menu-list">
+      <div class="mi" id="tripExportBtn"><div class="mi-icon">📊</div><div class="mi-info"><div class="mi-title">엑셀로 내보내기</div><div class="mi-sub">사진은 제외 · 번호와 날짜만</div></div><div class="mi-arrow">›</div></div>
       <div class="mi danger" id="tripDeleteAllBtn"><div class="mi-icon">🗑️</div><div class="mi-info"><div class="mi-title">전체 삭제</div><div class="mi-sub">복구 불가 — 신중히!</div></div><div class="mi-arrow">›</div></div>
     </div>
   </div>
@@ -654,7 +692,8 @@ textarea.fi{resize:none;min-height:76px;line-height:1.5;}
 <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
 <input type="file" id="songFileInput" accept=".xlsx,.xls,.csv">
 <input type="file" id="cardFileInput" accept=".xlsx,.xls,.csv">
-<input type="file" id="tripPhotoInput" accept="image/*">
+<input type="file" id="tripPhotoInput" accept="image/*" multiple>
+<input type="file" id="tripOcrInput" accept="image/*">
 
 <!-- ── LIGHTBOX ── -->
 <div id="lightboxModal">
@@ -692,7 +731,7 @@ let showPw={}, showCard={};
 let currentCardType='card';
 let currentTripType='flight';
 let tripPhotoData='';
-let lockTarget='pw'; // pw or card
+let lockTarget='pw'; // pw, card, trip
 
 const PW_SK='kv_pw_v3', CARD_SK='kv_card_v1', SONG_SK='kv_song_v2', TRIP_SK='kv_trip_v1', MK='kv_master_v3';
 const $=id=>document.getElementById(id);
@@ -739,9 +778,11 @@ $('goSongBtn').addEventListener('click',()=>{
   renderSongs();
 });
 $('goTripBtn').addEventListener('click',()=>{
-  loadTrips();
-  showScreen('tripApp');
-  renderTrips();
+  lockTarget='trip';
+  $('lockIcon').textContent='🧳';
+  $('lockTitle').textContent='여행 보관함';
+  showScreen('lockScreen');
+  initLock();
 });
 
 // ── LOCK ──
@@ -769,7 +810,7 @@ function handleUnlock(){
     savePw();saveCards();
     $('lockSuccess').style.display='block';
     $('lockBtn').textContent='입장하기';
-    setTimeout(()=>{ if(lockTarget==='card'){unlockCard();}else{unlockPw();} }, 1200);
+    setTimeout(()=>{ if(lockTarget==='card'){unlockCard();}else if(lockTarget==='trip'){unlockTrip();}else{unlockPw();} }, 1200);
   } else {
     if(hash(pw)!==localStorage.getItem(MK)){
       $('lockErr').textContent='비밀번호가 틀렸습니다';
@@ -782,12 +823,13 @@ function handleUnlock(){
     if(rp){const d=dec(rp,masterKey);if(d)pwEntries=d;}else pwEntries=[];
     const rc=localStorage.getItem(CARD_SK);
     if(rc){const d=dec(rc,masterKey);if(d)cardEntries=d;}else cardEntries=[];
-    if(lockTarget==='card'){unlockCard();}else{unlockPw();}
+    if(lockTarget==='card'){unlockCard();}else if(lockTarget==='trip'){unlockTrip();}else{unlockPw();}
   }
 }
 function unlockPw(){showScreen('pwApp');renderPw();}
 function unlockCard(){showScreen('cardApp');renderCards();}
-function lockAll(){masterKey='';pwEntries=[];cardEntries=[];showScreen('homeScreen');closeAll();}
+async function unlockTrip(){await loadTrips();showScreen('tripApp');renderTrips();}
+function lockAll(){masterKey='';pwEntries=[];cardEntries=[];tripEntries=[];showScreen('homeScreen');closeAll();}
 
 $('lockBtn').addEventListener('click',handleUnlock);
 $('masterInput').addEventListener('keydown',e=>{if(e.key==='Enter')handleUnlock();});
@@ -795,15 +837,45 @@ $('lockBackBtn').addEventListener('click',()=>showScreen('homeScreen'));
 $('pwBackBtn').addEventListener('click',()=>lockAll());
 $('cardBackBtn').addEventListener('click',()=>lockAll());
 $('songBackBtn').addEventListener('click',()=>showScreen('homeScreen'));
-$('tripBackBtn').addEventListener('click',()=>showScreen('homeScreen'));
+$('tripBackBtn').addEventListener('click',()=>lockAll());
 
 // ── STORAGE ──
-function savePw(){localStorage.setItem(PW_SK,enc(pwEntries,masterKey));}
-function saveCards(){localStorage.setItem(CARD_SK,enc(cardEntries,masterKey));}
+function safeSet(k,v){try{localStorage.setItem(k,v);return true;}catch(e){alert('저장 공간이 부족해서 저장하지 못했어요.\n엑셀로 백업한 뒤 필요 없는 항목을 지워 주세요.');return false;}}
+function savePw(){safeSet(PW_SK,enc(pwEntries,masterKey));}
+function saveCards(){safeSet(CARD_SK,enc(cardEntries,masterKey));}
 function loadSongs(){const r=localStorage.getItem(SONG_SK);songEntries=r?JSON.parse(r):[];}
 function saveSongs(){localStorage.setItem(SONG_SK,JSON.stringify(songEntries));}
-function loadTrips(){const r=localStorage.getItem(TRIP_SK);tripEntries=r?JSON.parse(r):[];}
-function saveTrips(){try{localStorage.setItem(TRIP_SK,JSON.stringify(tripEntries));}catch{toast('저장 공간이 부족해요. 사진 용량을 확인해주세요');}}
+// 여행 보관함 v2: 글자는 마스터 비밀번호로 암호화, 사진은 IndexedDB(큰 저장소)에 암호화 저장
+const TRIP2_SK='kv_trip_v2';
+function saveTrips(){safeSet(TRIP2_SK,enc(tripEntries,masterKey));}
+async function loadTrips(){
+  const r=localStorage.getItem(TRIP2_SK);
+  if(r){const d=dec(r,masterKey);tripEntries=Array.isArray(d)?d:[];}
+  else tripEntries=[];
+  // 예전(v1) 데이터 옮기기: 평문 저장 → 암호화 + 사진은 IndexedDB로
+  const old=localStorage.getItem(TRIP_SK);
+  if(old){
+    try{
+      const arr=JSON.parse(old)||[];let ok=true;
+      for(const e of arr){
+        const ids=[];
+        if(e.photo){try{const id=tripId();await idbPut(id,enc(e.photo,masterKey));ids.push(id);}catch(err){ok=false;}}
+        tripEntries.push({id:tripId(),tripType:e.tripType||'etc',agency:e.name||'',vendor:'',from:'',to:'',
+          nums:e.num?[{label:'예약번호',value:e.num}]:[],photoIds:ids,memo:e.memo||'',starred:!!e.starred,created:e.created||Date.now()});
+      }
+      if(ok&&safeSet(TRIP2_SK,enc(tripEntries,masterKey)))localStorage.removeItem(TRIP_SK);
+    }catch(err){}
+  }
+}
+const tripId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+// IndexedDB (사진)
+let _idb=null;
+function idb(){return _idb||(_idb=new Promise((ok,no)=>{const r=indexedDB.open('passbox',1);r.onupgradeneeded=()=>r.result.createObjectStore('photos');r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error);}));}
+async function idbPut(k,v){const d=await idb();return new Promise((ok,no)=>{const t=d.transaction('photos','readwrite');t.objectStore('photos').put(v,k);t.oncomplete=()=>ok();t.onerror=()=>no(t.error);});}
+async function idbGet(k){const d=await idb();return new Promise(ok=>{const q=d.transaction('photos').objectStore('photos').get(k);q.onsuccess=()=>ok(q.result);q.onerror=()=>ok(null);});}
+async function idbDel(k){const d=await idb();return new Promise(ok=>{const t=d.transaction('photos','readwrite');t.objectStore('photos').delete(k);t.oncomplete=()=>ok();t.onerror=()=>ok();});}
+async function idbAllKeys(){const d=await idb();return new Promise(ok=>{const q=d.transaction('photos').objectStore('photos').getAllKeys();q.onsuccess=()=>ok(q.result||[]);q.onerror=()=>ok([]);});}
+async function tripPhoto(id){const v=await idbGet(id);return v?dec(v,masterKey):null;}
 
 // ── PW STRENGTH ──
 function strength(pw){let s=0;if(pw.length>=8)s++;if(/[A-Z]/.test(pw))s++;if(/[0-9]/.test(pw))s++;if(/[^A-Za-z0-9]/.test(pw))s++;if(pw.length>=12)s++;return s;}
@@ -830,16 +902,24 @@ function setCardType(type){
 
 // ── TRIP TYPE ──
 const TRIP_TYPES={
-  flight:{icon:'✈️',label:'항공권',btn:'typeFlight'},
-  stay:{icon:'🏨',label:'숙소',btn:'typeStay'},
-  car:{icon:'🚗',label:'렌터카',btn:'typeCar'},
-  ins:{icon:'🛡️',label:'보험',btn:'typeIns'},
-  etc:{icon:'📎',label:'기타',btn:'typeEtc'}
+  flight:{icon:'✈️',label:'항공',btn:'typeFlight',from:'가는 날',to:'오는 날',vendor:'항공사',vph:'예) 대한항공',nums:['여행사 예약번호','항공사 예약번호','전자항공권 번호']},
+  stay:{icon:'🏨',label:'숙소',btn:'typeStay',from:'체크인',to:'체크아웃',vendor:'숙소 이름',vph:'예) 도톤보리 크로스 호텔',nums:['예약 사이트 번호','숙소 확인번호']},
+  car:{icon:'🚗',label:'렌터카',btn:'typeCar',from:'대여일',to:'반납일',vendor:'렌터카 회사',vph:'예) 롯데렌터카',nums:['예약번호']},
+  ins:{icon:'🛡️',label:'보험',btn:'typeIns',from:'시작일',to:'종료일',vendor:'보험사',vph:'예) 삼성화재',nums:['증권번호']},
+  etc:{icon:'📎',label:'기타',btn:'typeEtc',from:'시작일',to:'종료일',vendor:'이용 회사',vph:'예) 유니버설 스튜디오',nums:['예약번호']}
 };
-function setTripType(type){
-  currentTripType=type;
-  Object.values(TRIP_TYPES).forEach(t=>$(t.btn).classList.toggle('active',t.btn===TRIP_TYPES[type].btn));
+function setTripType(type,keepNums){
+  currentTripType=type;const t=TRIP_TYPES[type];
+  Object.values(TRIP_TYPES).forEach(x=>$(x.btn).classList.toggle('active',x.btn===t.btn));
+  $('tFromL').textContent=t.from;$('tToL').textContent=t.to;$('tVendorL').textContent=t.vendor;$('tVendor').placeholder=t.vph;
+  if(!keepNums){const cur=tripNumsRead().filter(n=>n.value);tripNumsRender(cur.length?cur:t.nums.map(l=>({label:l,value:''})));}
 }
+function tripNumsRender(list){
+  $('tNums').innerHTML=list.map((n,i)=>`<div class="num-row"><input class="fi num-l" value="${esc(n.label)}" placeholder="이름표"><input class="fi mono num-v" value="${esc(n.value)}" placeholder="번호"><button type="button" class="num-del" data-i="${i}">✕</button></div>`).join('');
+  $('tNums').querySelectorAll('.num-del').forEach(b=>b.onclick=()=>{const l=tripNumsRead();l.splice(+b.dataset.i,1);tripNumsRender(l);});
+}
+function tripNumsRead(){return [...document.querySelectorAll('#tNums .num-row')].map(r=>({label:r.querySelector('.num-l').value.trim()||'번호',value:r.querySelector('.num-v').value.trim()}));}
+$('tNumAdd').addEventListener('click',()=>{const l=tripNumsRead();l.push({label:'번호',value:''});tripNumsRender(l);});
 
 // ── IMAGE RESIZE (사진 용량 줄이기) ──
 function resizeImage(file,cb){
@@ -1032,43 +1112,62 @@ function makeCardItem(entry,idx){
 }
 
 // ── RENDER TRIPS ──
+const tripToday=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
+function tripDday(e){
+  if(!e.from)return '';const today=tripToday();
+  const end=e.to||e.from;
+  if(end<today)return '<span class="dday past">지난</span>';
+  if(e.from<=today)return '<span class="dday now">진행 중</span>';
+  const n=Math.round((new Date(e.from)-new Date(today))/864e5);
+  return `<span class="dday">${n===0?'오늘':'D-'+n}</span>`;
+}
+const tripFmt=d=>d?`${+d.slice(5,7)}/${+d.slice(8,10)}`:'';
+const tripDates=e=>e.from?(e.to&&e.to!==e.from?`${tripFmt(e.from)} ~ ${tripFmt(e.to)}`:tripFmt(e.from)):'';
 function renderTrips(){
-  const q=$('tripSearch').value.toLowerCase();
-  let list=tripEntries.filter(e=>(e.name||'').toLowerCase().includes(q)||(e.num||'').toLowerCase().includes(q)||(e.memo||'').toLowerCase().includes(q));
-  const starred=list.filter(e=>e.starred),normal=list.filter(e=>!e.starred);
+  const q=$('tripSearch').value.toLowerCase().trim();
+  const hay=e=>[e.agency,e.vendor,e.memo,(TRIP_TYPES[e.tripType]||{}).label,...(e.nums||[]).map(n=>n.label+' '+n.value)].join(' ').toLowerCase();
+  const list=tripEntries.filter(e=>!q||hay(e).includes(q));
   const wrap=$('tripList');wrap.innerHTML='';
   $('tripCount').textContent=tripEntries.length?`총 ${tripEntries.length}개 저장됨`:'';
   if(!list.length){wrap.innerHTML=`<div class="empty"><div class="empty-icon">🧳</div><div class="empty-text">${q?'검색 결과 없음':'저장된 예약이 없어요'}</div><div class="empty-sub">${q?'다른 검색어를 시도해보세요':'항공권 어디서 끊었더라? 아래 + 버튼으로 추가해보세요'}</div></div>`;return;}
-  function sec(arr,label){if(!arr.length)return;if(label){const d=document.createElement('div');d.className='list-section-label';d.textContent=label;wrap.appendChild(d);}arr.forEach(e=>wrap.appendChild(makeTripItem(e,tripEntries.indexOf(e))));}
-  if(starred.length)sec(starred,'⭐ 즐겨찾기');
-  sec(normal,starred.length?'전체':'');
+  const today=tripToday();
+  const star=list.filter(e=>e.starred);
+  const rest=list.filter(e=>!e.starred);
+  const up=rest.filter(e=>e.from&&(e.to||e.from)>=today).sort((a,b)=>a.from.localeCompare(b.from));
+  const nod=rest.filter(e=>!e.from);
+  const past=rest.filter(e=>e.from&&(e.to||e.from)<today).sort((a,b)=>b.from.localeCompare(a.from));
+  function sec(arr,label){if(!arr.length)return;const d=document.createElement('div');d.className='list-section-label';d.textContent=label;wrap.appendChild(d);arr.forEach(e=>wrap.appendChild(makeTripItem(e,tripEntries.indexOf(e))));}
+  sec(star,'⭐ 즐겨찾기');sec(up,'다가오는 예약');sec(nod,'날짜 없음');sec(past,'지난 예약');
 }
-
 function makeTripItem(entry,idx){
   const div=document.createElement('div');div.className='list-item';
   const t=TRIP_TYPES[entry.tripType]||TRIP_TYPES.etc;
+  const title=entry.vendor||entry.agency||t.label;
+  const sub=[entry.vendor&&entry.agency?`${entry.agency} 통해 예약`:'',tripDates(entry)].filter(Boolean).join(' · ')||(entry.nums&&entry.nums[0]?entry.nums[0].value:'');
+  const nums=(entry.nums||[]).filter(n=>n.value);
+  const hasPnr=nums.some(n=>/항공사/.test(n.label))&&nums.some(n=>/여행사/.test(n.label));
   div.innerHTML=`
     <div class="list-item-main">
-      ${entry.photo?`<img class="item-thumb" src="${entry.photo}">`:`<div class="item-icon trip-icon">${t.icon}</div>`}
+      <div class="item-icon trip-icon">${t.icon}</div>
       <div class="item-info">
-        <div class="item-name">${esc(entry.name||t.label)}</div>
-        <div class="item-sub mono">${t.icon} ${esc(entry.num||'예약번호 없음')}</div>
+        <div class="item-name">${esc(title)}</div>
+        <div class="item-sub">${esc(sub)}</div>
       </div>
       <div class="item-right">
+        ${tripDday(entry)}
         <button class="star-btn ${entry.starred?'on':''}">${entry.starred?'⭐':'☆'}</button>
         <button class="chevron">⌄</button>
       </div>
     </div>
-    <div class="item-expand" id="texp-${idx}">
-      ${entry.photo?`<img class="exp-photo" data-full="${entry.photo}" src="${entry.photo}">`:''}
-      <div class="exp-row"><div class="exp-label">종류</div><div class="exp-val normal"><span class="card-type-badge" style="background:var(--trip-light);color:var(--trip);border-color:rgba(58,125,107,.2);">${t.icon} ${t.label}</span></div></div>
-      <div class="exp-row"><div class="exp-label">예약처</div><div class="exp-val normal">${esc(entry.name||'-')}</div></div>
-      <div class="exp-row"><div class="exp-label">번호</div><div class="exp-val">${esc(entry.num||'-')}</div></div>
+    <div class="item-expand">
+      ${entry.from?`<div class="exp-row"><div class="exp-label">날짜</div><div class="exp-val normal">${esc(entry.from)}${entry.to&&entry.to!==entry.from?' ~ '+esc(entry.to):''}</div></div>`:''}
+      <div class="exp-row"><div class="exp-label">예약한 곳</div><div class="exp-val normal">${esc(entry.agency||'-')}</div></div>
+      <div class="exp-row"><div class="exp-label">${esc(t.vendor)}</div><div class="exp-val normal">${esc(entry.vendor||'-')}</div></div>
+      <div class="trip-nums">${nums.map((n,i)=>`<div class="trip-num"><div><small>${esc(n.label)}</small><b>${esc(n.value)}</b></div><button class="cbtn" data-n="${i}">복사</button></div>`).join('')||'<div class="exp-memo">저장된 번호가 없어요</div>'}</div>
+      ${hasPnr?'<div class="trip-hint">💡 공항 체크인·항공사 앱에서는 <b>항공사 예약번호</b>를, 변경·취소는 <b>여행사 예약번호</b>로 문의하세요.</div>':''}
+      ${(entry.photoIds||[]).length?`<div class="photo-grid view" data-photos="1"></div>`:''}
       ${entry.memo?`<div class="exp-memo">📝 ${esc(entry.memo)}</div>`:''}
-      <div class="copy-row">
-        <button class="cbtn" data-t="num">📋 번호복사</button>
-        <button class="cbtn trip-all" data-t="all">📤 전체복사</button>
-      </div>
+      <div class="copy-row"><button class="cbtn trip-all" data-t="all">📤 전체 복사</button></div>
       <div class="act-row">
         <button class="abtn mod trip">✏️ 수정</button>
         <button class="abtn del">🗑️ 삭제</button>
@@ -1076,21 +1175,18 @@ function makeTripItem(entry,idx){
     </div>`;
   div.querySelector('.star-btn').addEventListener('click',e=>{e.stopPropagation();tripEntries[idx].starred=!tripEntries[idx].starred;saveTrips();renderTrips();});
   const ch=div.querySelector('.chevron');
-  ch.addEventListener('click',e=>{e.stopPropagation();div.querySelector('.item-expand').classList.toggle('open');ch.classList.toggle('open');});
-  const photoEl=div.querySelector('.exp-photo');
-  if(photoEl)photoEl.addEventListener('click',e=>{e.stopPropagation();openLightbox(photoEl.dataset.full);});
-  div.querySelectorAll('.cbtn').forEach(btn=>{
-    btn.addEventListener('click',e=>{
-      e.stopPropagation();
-      const tt=btn.dataset.t;
-      if(tt==='num'){if(entry.num){copyText(entry.num);toast('예약번호 복사됨!');}else toast('예약번호가 없어요');}
-      else{copyText(`${t.label}\n예약처: ${entry.name||'-'}\n예약번호: ${entry.num||'-'}${entry.memo?'\n메모: '+entry.memo:''}`);toast('전체 복사됨! 📤');}
-    });
-  });
+  let photosLoaded=false;
+  const toggle=async e=>{e.stopPropagation();const ex=div.querySelector('.item-expand');ex.classList.toggle('open');ch.classList.toggle('open');
+    if(ex.classList.contains('open')&&!photosLoaded){photosLoaded=true;const g=div.querySelector('[data-photos]');if(g){for(const id of entry.photoIds){const src=await tripPhoto(id);if(!src)continue;const im=document.createElement('img');im.src=src;im.onclick=ev=>{ev.stopPropagation();openLightbox(src);};g.appendChild(im);}}}};
+  ch.addEventListener('click',toggle);
+  div.querySelector('.list-item-main').addEventListener('click',toggle);
+  div.querySelectorAll('.cbtn[data-n]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const n=nums[+b.dataset.n];copyText(n.value);toast(`${n.label} 복사됨`);}));
+  div.querySelector('.cbtn[data-t="all"]').addEventListener('click',e=>{e.stopPropagation();
+    copyText([`[${t.label}] ${title}`,tripDates(entry)&&`날짜: ${entry.from}${entry.to&&entry.to!==entry.from?' ~ '+entry.to:''}`,entry.agency&&`예약한 곳: ${entry.agency}`,entry.vendor&&`${t.vendor}: ${entry.vendor}`,...nums.map(n=>`${n.label}: ${n.value}`),entry.memo&&`메모: ${entry.memo}`].filter(Boolean).join('\n'));toast('전체 복사됨');});
   div.querySelector('.abtn.mod').addEventListener('click',e=>{e.stopPropagation();openTripEdit(idx);});
-  div.querySelector('.abtn.del').addEventListener('click',e=>{
+  div.querySelector('.abtn.del').addEventListener('click',async e=>{
     e.stopPropagation();
-    if(confirm(`"${entry.name||t.label}" 삭제할까요?`)){tripEntries.splice(idx,1);saveTrips();renderTrips();toast('삭제됨');}
+    if(confirm(`"${title}" 삭제할까요?`)){for(const id of entry.photoIds||[])await idbDel(id);tripEntries.splice(idx,1);saveTrips();renderTrips();toast('삭제됨');}
   });
   return div;
 }
@@ -1149,7 +1245,7 @@ $('cardSaveBtn').addEventListener('click',()=>{
     holder:$('cHolder').value.trim(), memo:$('cMemo').value.trim(),
     cardType:currentCardType, starred:false, created:Date.now()
   };
-  if(cardEditIdx>=0){cardEntries[cardEditIdx]={...cardEntries[cardEditIdx],...entry};toast('수정됨 ✓');}
+  if(cardEditIdx>=0){const {starred,created,...upd}=entry;cardEntries[cardEditIdx]={...cardEntries[cardEditIdx],...upd};toast('수정됨 ✓');}
   else{cardEntries.unshift(entry);toast('저장됨 ✓');}
   saveCards();renderCards();closeM('cardAddModal');
 });
@@ -1157,49 +1253,156 @@ $('cardSearch').addEventListener('input',()=>renderCards());
 $('cardMenuBtn').addEventListener('click',()=>openM('cardMenuModal'));
 
 // ── TRIP ADD/EDIT ──
-function resetTripPhotoUI(){
-  tripPhotoData='';
-  $('tPhotoDrop').classList.remove('has');
-  $('tPhotoDrop').innerHTML='📷 탭해서 사진 추가';
+let tripPhotos=[];   // [{id, src, isNew}]
+let tripPhotosRemoved=[];
+function tripPhotosRender(){
+  $('tPhotos').innerHTML=tripPhotos.map((p,i)=>`<div class="ph"><img src="${p.src}"><button type="button" data-i="${i}">✕</button></div>`).join('')+'<button type="button" class="ph-add" id="tPhotoAdd">＋<small>사진</small></button>';
+  $('tPhotos').querySelectorAll('.ph button').forEach(b=>b.onclick=()=>{const p=tripPhotos.splice(+b.dataset.i,1)[0];if(p&&!p.isNew)tripPhotosRemoved.push(p.id);tripPhotosRender();});
+  $('tPhotos').querySelectorAll('.ph img').forEach((im,i)=>im.onclick=()=>openLightbox(tripPhotos[i].src));
+  $('tPhotoAdd').onclick=()=>$('tripPhotoInput').click();
 }
-function setTripPhotoUI(dataUrl){
-  tripPhotoData=dataUrl;
-  $('tPhotoDrop').classList.add('has');
-  $('tPhotoDrop').innerHTML=`<img src="${dataUrl}"><button class="photo-remove" id="tPhotoRemove" type="button">✕</button>`;
-  $('tPhotoRemove').addEventListener('click',e=>{e.stopPropagation();resetTripPhotoUI();});
-}
-$('tPhotoDrop').addEventListener('click',()=>{if(!tripPhotoData)$('tripPhotoInput').click();});
 $('tripPhotoInput').addEventListener('change',e=>{
-  const file=e.target.files[0];if(!file)return;
-  resizeImage(file,dataUrl=>setTripPhotoUI(dataUrl));
+  [...e.target.files].slice(0,8).forEach(file=>resizeImage(file,src=>{tripPhotos.push({id:tripId(),src,isNew:true});tripPhotosRender();}));
   e.target.value='';
 });
+function tripFormFill(e){
+  setTripType(e.tripType||'flight',true);
+  $('tFrom').value=e.from||'';$('tTo').value=e.to||'';$('tAgency').value=e.agency||'';$('tVendor').value=e.vendor||'';$('tMemo').value=e.memo||'';
+  tripNumsRender((e.nums&&e.nums.length)?e.nums:TRIP_TYPES[e.tripType||'flight'].nums.map(l=>({label:l,value:''})));
+}
 $('tripFab').addEventListener('click',()=>{
   tripEditIdx=-1;$('tripAddTitle').textContent='예약 추가';$('tripSaveBtn').textContent='저장';
-  ['tName','tNum','tMemo'].forEach(id=>$(id).value='');
-  resetTripPhotoUI();setTripType('flight');
-  openM('tripAddModal');setTimeout(()=>$('tName').focus(),350);
-});
-function openTripEdit(idx){
-  tripEditIdx=idx;const e=tripEntries[idx];
-  $('tripAddTitle').textContent='수정';$('tripSaveBtn').textContent='수정 저장';
-  setTripType(e.tripType||'flight');
-  $('tName').value=e.name||'';$('tNum').value=e.num||'';$('tMemo').value=e.memo||'';
-  if(e.photo)setTripPhotoUI(e.photo);else resetTripPhotoUI();
+  tripPhotos=[];tripPhotosRemoved=[];tripPhotosRender();$('tOcrStatus').textContent='';
+  tripFormFill({tripType:'flight'});
   openM('tripAddModal');
+});
+async function openTripEdit(idx){
+  tripEditIdx=idx;const e=tripEntries[idx];
+  $('tripAddTitle').textContent='수정';$('tripSaveBtn').textContent='수정 저장';$('tOcrStatus').textContent='';
+  tripFormFill(e);tripPhotos=[];tripPhotosRemoved=[];tripPhotosRender();
+  openM('tripAddModal');
+  for(const id of e.photoIds||[]){const src=await tripPhoto(id);if(src){tripPhotos.push({id,src,isNew:false});tripPhotosRender();}}
 }
-$('tripSaveBtn').addEventListener('click',()=>{
-  const name=$('tName').value.trim(),num=$('tNum').value.trim(),memo=$('tMemo').value.trim();
-  if(!name){toast('예약처를 입력해주세요');return;}
-  const entry={name,num,memo,photo:tripPhotoData,tripType:currentTripType,starred:false,created:Date.now()};
-  if(tripEditIdx>=0){tripEntries[tripEditIdx]={...tripEntries[tripEditIdx],...entry,created:tripEntries[tripEditIdx].created};toast('수정됨 ✓');}
-  else{tripEntries.unshift(entry);toast('저장됨 ✓');}
-  saveTrips();renderTrips();closeM('tripAddModal');
+$('tripSaveBtn').addEventListener('click',async()=>{
+  const agency=$('tAgency').value.trim(),vendor=$('tVendor').value.trim(),memo=$('tMemo').value.trim();
+  let from=$('tFrom').value,to=$('tTo').value;if(from&&to&&to<from)[from,to]=[to,from];
+  const nums=tripNumsRead().filter(n=>n.value);
+  if(!agency&&!vendor&&!nums.length){toast('예약한 곳이나 번호를 하나는 입력해주세요');return;}
+  $('tripSaveBtn').disabled=true;
+  try{
+    for(const p of tripPhotos.filter(p=>p.isNew))await idbPut(p.id,enc(p.src,masterKey));
+    for(const id of tripPhotosRemoved)await idbDel(id);
+  }catch(err){$('tripSaveBtn').disabled=false;toast('사진을 저장하지 못했어요');return;}
+  const data={tripType:currentTripType,agency,vendor,from,to,nums,memo,photoIds:tripPhotos.map(p=>p.id)};
+  if(tripEditIdx>=0){tripEntries[tripEditIdx]={...tripEntries[tripEditIdx],...data};toast('수정됨 ✓');}
+  else{tripEntries.unshift({id:tripId(),...data,starred:false,created:Date.now()});toast('저장됨 ✓');}
+  saveTrips();renderTrips();closeM('tripAddModal');$('tripSaveBtn').disabled=false;
 });
 $('tripSearch').addEventListener('input',()=>renderTrips());
 $('tripMenuBtn').addEventListener('click',()=>openM('tripMenuModal'));
-$('tripDeleteAllBtn').addEventListener('click',()=>{
-  if(confirm('여행 보관함 전체 삭제할까요?')){if(confirm('정말요?')){tripEntries=[];localStorage.removeItem(TRIP_SK);renderTrips();closeM('tripMenuModal');toast('전체 삭제됨');}}
+$('tripDeleteAllBtn').addEventListener('click',async()=>{
+  if(confirm('여행 보관함 전체 삭제할까요?')){if(confirm('정말요?')){for(const e of tripEntries)for(const id of e.photoIds||[])await idbDel(id);tripEntries=[];saveTrips();renderTrips();closeM('tripMenuModal');toast('전체 삭제됨');}}
+});
+$('tripExportBtn').addEventListener('click',()=>{
+  if(!tripEntries.length){toast('내보낼 예약이 없어요');return;}
+  const data=tripEntries.map(e=>({'종류':(TRIP_TYPES[e.tripType]||TRIP_TYPES.etc).label,'시작일':e.from||'','종료일':e.to||'','예약한 곳':e.agency||'','이용 회사':e.vendor||'',
+    '번호':(e.nums||[]).map(n=>`${n.label}: ${n.value}`).join('\n'),'메모':e.memo||''}));
+  const ws=XLSX.utils.json_to_sheet(data);ws['!cols']=[{wch:8},{wch:12},{wch:12},{wch:16},{wch:20},{wch:40},{wch:30}];
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,'여행',ws);
+  XLSX.writeFile(wb,`여행보관함_백업_${new Date().toISOString().slice(0,10)}.xlsx`);
+  closeM('tripMenuModal');toast('엑셀 내보내기 완료 📊');
+});
+
+// ── 사진으로 자동 입력 (기기 안에서만 글자 인식 · 서버 전송 없음) ──
+// ── 예약 사진 글자 → 칸 자동 채우기 (기기 안에서만) ──
+const TRIP_AIRLINES=['대한항공','아시아나','제주항공','진에어','티웨이','에어부산','에어서울','이스타','에어프레미아','에어로케이','파라타','피치','일본항공','전일본공수','ANA','JAL','캐세이','싱가포르항공','베트남항공','비엣젯','세부퍼시픽','에어아시아','타이항공','에바항공','중화항공','델타','유나이티드','에어캐나다','루프트한자','에어프랑스','KLM','에미레이트','카타르항공','Korean Air','Asiana','Jeju Air','Jin Air',"T'way",'Air Busan','Air Seoul','Eastar','Peach'];
+const TRIP_AGENCIES=['인터파크','하나투어','모두투어','노랑풍선','참좋은여행','교원투어','롯데관광','트립닷컴','Trip.com','아고다','agoda','익스피디아','Expedia','부킹닷컴','Booking.com','호텔스닷컴','Hotels.com','야놀자','여기어때','에어비앤비','Airbnb','마이리얼트립','클룩','KLOOK','KKday','스카이스캐너','네이버','쿠팡','땡처리','와이페이모어','트립비토즈','제주패스','롯데렌터카','SK렌터카'];
+function tripParse(raw){
+  const text=String(raw||'').replace(/\r/g,'').replace(/(\d)0CT\b/g,'$1OCT');
+  const lines=text.split('\n').map(s=>s.trim()).filter(Boolean);
+  const out={type:'',agency:'',vendor:'',from:'',to:'',nums:[]};
+  const low=text.toLowerCase(), nospace=text.replace(/\s+/g,'');
+  // 긴 이름부터, 영문은 단어 경계로 (KOREAN AIR 안의 'ANA' 같은 오인식 방지)
+  const findIn=list=>list.slice().sort((a,b)=>b.length-a.length).find(n=>/[a-z]/i.test(n)
+    ? new RegExp('(^|[^a-z])'+n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/\s+/g,'\\s*')+'($|[^a-z])','i').test(text)
+    : nospace.includes(n.replace(/\s+/g,'')));
+  const EN2KR={'korean air':'대한항공','asiana':'아시아나','jeju air':'제주항공','jin air':'진에어',"t'way":'티웨이','air busan':'에어부산','air seoul':'에어서울','eastar':'이스타','peach':'피치','ana':'전일본공수','jal':'일본항공','agoda':'아고다','expedia':'익스피디아','booking.com':'부킹닷컴','hotels.com':'호텔스닷컴','airbnb':'에어비앤비','klook':'클룩','trip.com':'트립닷컴'};
+  const kr=n=>n?(EN2KR[n.toLowerCase()]||n):'';
+  out.agency=kr(findIn(TRIP_AGENCIES));
+  const air=kr(findIn(TRIP_AIRLINES));
+  // 종류
+  if(air||/항공권|탑승|편명|e-?ticket|flight|boarding|출국|귀국/i.test(text))out.type='flight';
+  else if(/호텔|hotel|체크인|check-?in|숙소|리조트|resort|객실/i.test(text))out.type='stay';
+  else if(/렌터카|렌트카|rent|대여/i.test(text))out.type='car';
+  else if(/보험|증권/i.test(text))out.type='ins';
+  if(out.type==='flight'&&air)out.vendor=air;
+  if(out.type==='stay'){const h=lines.find(l=>/호텔|hotel|리조트|resort|inn\b|게스트하우스|료칸|펜션/i.test(l)&&!/확인|번호|체크|예약|check/i.test(l));if(h)out.vendor=h.replace(/[|•·:]+/g,' ').trim().slice(0,40);}
+  // 날짜
+  const ds=[];const now=new Date();const Y=now.getFullYear();
+  const pad=n=>String(n).padStart(2,'0');
+  const push=(y,m,d)=>{y=+y;m=+m;d=+d;if(y<100)y+=2000;if(m<1||m>12||d<1||d>31)return;ds.push(`${y}-${pad(m)}-${pad(d)}`);};
+  for(const m of text.matchAll(/(20\d{2})\s*[.\-/년]\s*(\d{1,2})\s*[.\-/월]\s*(\d{1,2})/g))push(m[1],m[2],m[3]);
+  const MON={JAN:1,FEB:2,MAR:3,APR:4,MAY:5,JUN:6,JUL:7,AUG:8,SEP:9,OCT:10,NOV:11,DEC:12};
+  for(const m of text.toUpperCase().matchAll(/\b(\d{1,2})\s?(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\s?(\d{2,4})?\b/g))push(m[3]||Y,MON[m[2]],m[1]);
+  if(!ds.length)for(const m of text.matchAll(/(\d{1,2})\s*월\s*(\d{1,2})\s*일/g)){let y=Y;if(+m[1]<now.getMonth()+1-2)y++;push(y,m[1],m[2]);}
+  const uniq=[...new Set(ds)].sort();
+  if(uniq.length){out.from=uniq[0];if(uniq.length>1)out.to=uniq[uniq.length-1];}
+  // 번호
+  const seen=new Set();
+  const add=(label,v)=>{v=String(v).replace(/[^\w\-]/g,'');if(v.length<5||seen.has(v))return;seen.add(v);out.nums.push({label,value:v});};
+  for(const m of text.matchAll(/\b(\d{3})[\s-]?(\d{10})\b/g))add('전자항공권 번호',`${m[1]}-${m[2]}`);
+  const labelOf=l=>{
+    if(/항공사|pnr|airline|예약\s*코드|record\s*locator|booking\s*ref/i.test(l))return '항공사 예약번호';
+    if(/확인\s*번호|confirmation|호텔\s*번호|숙소\s*번호/i.test(l))return out.type==='stay'?'숙소 확인번호':'확인번호';
+    if(/증권/i.test(l))return '증권번호';
+    if(/예약\s*번호|주문\s*번호|booking|reservation|예약\s*id|itinerary|여정\s*번호/i.test(l))return out.type==='flight'?'여행사 예약번호':out.type==='stay'?'예약 사이트 번호':'예약번호';
+    return '';
+  };
+  lines.forEach((l,i)=>{
+    const lab=labelOf(l);if(!lab)return;
+    const same=l.split(/[:：]/).slice(1).join(':');
+    const after=same||lines[i+1]||'';
+    const tok=(after.match(/[A-Z0-9][A-Z0-9\-]{4,19}/i)||[])[0];
+    // 숫자가 섞인 것만 (영문만이면 같은 줄 콜론 뒤 6자리일 때만)
+    const ok=tok&&(/\d/.test(tok)||(same&&/^[A-Z]{6}$/.test(tok)));
+    if(ok&&!/^\d{3}-?\d{10}$/.test(tok))add(lab,tok.toUpperCase());
+  });
+  // 라벨 없이 보이는 PNR 후보 (영문 대문자+숫자 6자리)
+  if(out.type==='flight'&&!out.nums.some(n=>/PNR/.test(n.label))){
+    const c=(text.match(/\b(?=[A-Z0-9]*[A-Z])(?=[A-Z0-9]*\d)[A-Z0-9]{6}\b/g)||[]).find(t=>!seen.has(t)&&!/^[A-Z]{2}\d{3,4}$/.test(t));
+    if(c)add('항공사 예약번호',c);
+  }
+  return out;
+}
+
+let _ocrLib=null;
+function ocrLib(){return _ocrLib||(_ocrLib=new Promise((ok,no)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';sc.onload=()=>ok(window.Tesseract);sc.onerror=()=>{_ocrLib=null;no(new Error('load'));};document.head.appendChild(sc);}));}
+$('tOcrBtn').addEventListener('click',()=>$('tripOcrInput').click());
+$('tripOcrInput').addEventListener('change',e=>{
+  const file=e.target.files[0];e.target.value='';if(!file)return;
+  const st=$('tOcrStatus');
+  resizeImage(file,async src=>{
+    tripPhotos.push({id:tripId(),src,isNew:true});tripPhotosRender();
+    st.textContent='글자 읽는 중… (처음 한 번은 20~30초 걸려요)';$('tOcrBtn').disabled=true;
+    try{
+      const T=await ocrLib();
+      const w=await T.createWorker(['kor','eng']);
+      const {data:{text}}=await w.recognize(src);await w.terminate();
+      const r=tripParse(text);let n=0;
+      if(r.type&&!$('tAgency').value&&!$('tVendor').value){setTripType(r.type,true);n++;}
+      if(r.from&&!$('tFrom').value){$('tFrom').value=r.from;n++;}
+      if(r.to&&!$('tTo').value){$('tTo').value=r.to;n++;}
+      if(r.agency&&!$('tAgency').value){$('tAgency').value=r.agency;n++;}
+      if(r.vendor&&!$('tVendor').value){$('tVendor').value=r.vendor;n++;}
+      if(r.nums.length){
+        const cur=tripNumsRead();
+        r.nums.forEach(x=>{if(cur.some(c=>c.value===x.value))return;const slot=cur.find(c=>!c.value&&c.label===x.label);if(slot)slot.value=x.value;else cur.push(x);n++;});
+        tripNumsRender(cur.filter((c,i)=>c.value||cur.findIndex(d=>d.label===c.label)===i));
+      }
+      st.textContent=n?`✅ ${n}개 칸을 채웠어요. 틀린 글자가 있을 수 있으니 확인 후 저장해 주세요.`:'읽을 수 있는 번호를 찾지 못했어요. 직접 입력해 주세요. (사진은 첨부됐어요)';
+    }catch(err){st.textContent='글자 인식을 불러오지 못했어요. 인터넷 연결을 확인해 주세요. (사진은 첨부됐어요)';}
+    $('tOcrBtn').disabled=false;
+  });
 });
 
 // ── RENDER SONGS ──
@@ -1322,7 +1525,14 @@ $('cpSave').addEventListener('click',()=>{
   if(hash(cur)!==localStorage.getItem(MK)){toast('현재 비밀번호가 틀렸어요');return;}
   if(nw.length<4){toast('4자 이상 입력해주세요');return;}
   if(nw!==cf){toast('새 비밀번호가 일치하지 않아요');return;}
-  localStorage.setItem(MK,hash(nw));masterKey=nw;savePw();saveCards();closeM('changePwModal');toast('비밀번호 변경됨 🔑');
+  (async()=>{
+    // 여행 보관함(글자·사진)도 새 비밀번호로 다시 잠그기
+    const tr=localStorage.getItem(TRIP2_SK);const trips=tr?dec(tr,cur):null;
+    for(const k of await idbAllKeys()){const v=await idbGet(k);const d=v?dec(v,cur):null;if(d)await idbPut(k,enc(d,nw));}
+    localStorage.setItem(MK,hash(nw));masterKey=nw;savePw();saveCards();
+    if(trips){safeSet(TRIP2_SK,enc(trips,nw));}
+    closeM('changePwModal');toast('비밀번호 변경됨 🔑');
+  })();
 });
 $('lockMenuBtn').addEventListener('click',()=>lockAll());
 $('aboutBtn').addEventListener('click',()=>{closeM('pwMenuModal');openM('aboutModal');});
