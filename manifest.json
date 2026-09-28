@@ -4,8 +4,8 @@
   "description": "서버 저장 없는 나만의 비밀번호 관리 앱",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "background_color": "#f2f0eb",
+  "theme_color": "#1e3932",
   "orientation": "portrait",
   "icons": [
     {
