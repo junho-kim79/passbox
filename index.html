@@ -16,9 +16,12 @@
 <script>
   if('serviceWorker' in navigator){
     window.addEventListener('load', ()=>{
-      navigator.serviceWorker.register('/service-worker.js')
-        .then(reg=>console.log('SW registered'))
+      navigator.serviceWorker.register('/service-worker.js', { updateViaCache: 'none' })
+        .then(reg=>{ reg.update(); })
         .catch(err=>console.log('SW error', err));
+      // 새 버전이 적용되면 한 번만 새로고침 (예전 v1 저장본에서 빠져나오기)
+      let reloaded=false;
+      navigator.serviceWorker.addEventListener('controllerchange', ()=>{ if(reloaded) return; reloaded=true; location.reload(); });
     });
   }
 </script>
